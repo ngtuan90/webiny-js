@@ -7,6 +7,14 @@ import Page from "./components/Page";
 
 export const App = () => (
     <ApolloProvider client={createApolloClient()}>
+        <div>
+            <a className="text-blue-600" href="#">
+                This should be blue
+            </a>
+            <a className="text-green-400" href="#">
+                This should be green
+            </a>
+        </div>
         <BrowserRouter basename={process.env.PUBLIC_URL}>
             <PageBuilderProvider>
                 <Switch>

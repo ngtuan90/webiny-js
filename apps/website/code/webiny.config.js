@@ -23,7 +23,15 @@ module.exports = {
             Object.assign(process.env, output);
 
             // Start local development
-            await startApp(options, context);
+            await startApp(
+                {
+                    ...options,
+                    webpack(config) {
+                        return require("./applyTailwindToWebpack")(config);
+                    }
+                },
+                context
+            );
         },
         async build(options, context) {
             invariant(options.env, NO_ENV_MESSAGE);

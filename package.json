@@ -22,6 +22,12 @@
     "type": "git",
     "url": "https://github.com/webiny/webiny-js.git"
   },
+  "dependencies": {
+    "@tailwindcss/postcss7-compat": "^2.1.2",
+    "postcss-flexbugs-fixes": "^4",
+    "postcss-preset-env": "^6.7.0",
+    "precss": "^4.0.0"
+  },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "^1.4.0",
     "@babel/cli": "^7.0.0",
