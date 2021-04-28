@@ -1,0 +1,4 @@
+name: assets
+runtime: nodejs
+description: Represents infrastructure to host static Facemunch assets.
+main: pulumi/

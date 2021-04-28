@@ -19,7 +19,12 @@ module.exports = {
     commands: {
         async start(options, context) {
             invariant(options.env, NO_ENV_MESSAGE);
-
+            // Get assets
+            const assetsState = await getStackOutput("apps/assets", options.env);
+            console.log(assetsState);
+            
+            process.exit();
+            // 
             const output = await getStackOutput("api", options.env, MAP);
             invariant(output, NO_API_MESSAGE(options.env));
 

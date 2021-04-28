@@ -4,6 +4,7 @@
     "packages": [
       "plugins/cli-plugin-generate-ts-configs",
       "packages/*",
+      "apps/assets/code",
       "apps/admin/code",
       "apps/website/code",
       "apps/theme",
