@@ -36,14 +36,5 @@ module.exports = {
     },
     variants: {
         extend: {}
-    },
-    plugins: [
-        /**
-         * Use "@tailwindcss/postcss7-compat" instead of "tailwindcss"
-         */
-        require("@tailwindcss/postcss7-compat"),
-        require("precss"),
-        require("autoprefixer"),
-        require("postcss-import")
-    ]
+    }
 };

@@ -2,6 +2,6 @@
 @import "./formBuilder/styles/theme.scss";
 @import "~@webiny/react-rich-text-renderer/styles.scss";
 
-@import "~@tailwindcss/postcss7-compat/base";
-@import "~@tailwindcss/postcss7-compat/components";
-@import "~@tailwindcss/postcss7-compat/utilities";
+@import "~tailwindcss/base";
+@import "~tailwindcss/components";
+@import "~tailwindcss/utilities";

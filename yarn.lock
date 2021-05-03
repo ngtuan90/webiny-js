@@ -6093,46 +6093,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tailwindcss/postcss7-compat@npm:^2.1.2":
-  version: 2.1.2
-  resolution: "@tailwindcss/postcss7-compat@npm:2.1.2"
-  dependencies:
-    "@fullhuman/postcss-purgecss": ^3.1.3
-    autoprefixer: ^9
-    bytes: ^3.0.0
-    chalk: ^4.1.0
-    chokidar: ^3.5.1
-    color: ^3.1.3
-    detective: ^5.2.0
-    didyoumean: ^1.2.1
-    dlv: ^1.1.3
-    fast-glob: ^3.2.5
-    fs-extra: ^9.1.0
-    html-tags: ^3.1.0
-    lodash: ^4.17.21
-    lodash.topath: ^4.5.2
-    modern-normalize: ^1.0.0
-    node-emoji: ^1.8.1
-    normalize-path: ^3.0.0
-    object-hash: ^2.1.1
-    parse-glob: ^3.0.4
-    postcss: ^7
-    postcss-functions: ^3
-    postcss-js: ^2
-    postcss-nested: ^4
-    postcss-selector-parser: ^6.0.4
-    postcss-value-parser: ^4.1.0
-    pretty-hrtime: ^1.0.3
-    quick-lru: ^5.1.1
-    reduce-css-calc: ^2.1.8
-    resolve: ^1.20.0
-  bin:
-    tailwind: lib/cli.js
-    tailwindcss: lib/cli.js
-  checksum: d7bda1825f45f34683462b52163eded4833846bb84f44d19b9f3c5dbd56b29cd8fe33927cd174e84a7c7188016a2fb5e2e84edcd28dfe55d6e726b38d4fe4cfd
-  languageName: node
-  linkType: hard
-
 "@testing-library/cypress@npm:^7.0.2":
   version: 7.0.6
   resolution: "@testing-library/cypress@npm:7.0.6"
@@ -30748,7 +30708,6 @@ resolve@^2.0.0-next.3:
     "@babel/core": ^7.0.0
     "@commitlint/cli": ^11.0.0
     "@commitlint/config-conventional": ^11.0.0
-    "@tailwindcss/postcss7-compat": ^2.1.2
     "@testing-library/cypress": ^7.0.2
     "@types/fs-extra": ^8.0.1
     "@types/jest": ^24.0.24
@@ -30821,6 +30780,7 @@ resolve@^2.0.0-next.3:
     rxjs: ^6.5.5
     semver: ^6.3.0
     source-map-support: ^0.5.0
+    tailwindcss: "npm:@tailwindcss/postcss7-compat@^2.1.2"
     ts-jest: ^26.4.4
     typescript: 4.1.3
     typescript-transform-paths: ^2.2.3
@@ -32746,6 +32706,46 @@ resolve@^2.0.0-next.3:
     slice-ansi: ^4.0.0
     string-width: ^4.2.0
   checksum: 8c016c3f92e87fe1f11623c73eb7bc7e1a4574415952942b9cb9722d2ed70c197a0abe21ef06b1b490f90af3abf9dc2378d8f5bb3624a38faee8640bada43bd1
+  languageName: node
+  linkType: hard
+
+"tailwindcss@npm:@tailwindcss/postcss7-compat@^2.1.2":
+  version: 2.1.2
+  resolution: "@tailwindcss/postcss7-compat@npm:2.1.2"
+  dependencies:
+    "@fullhuman/postcss-purgecss": ^3.1.3
+    autoprefixer: ^9
+    bytes: ^3.0.0
+    chalk: ^4.1.0
+    chokidar: ^3.5.1
+    color: ^3.1.3
+    detective: ^5.2.0
+    didyoumean: ^1.2.1
+    dlv: ^1.1.3
+    fast-glob: ^3.2.5
+    fs-extra: ^9.1.0
+    html-tags: ^3.1.0
+    lodash: ^4.17.21
+    lodash.topath: ^4.5.2
+    modern-normalize: ^1.0.0
+    node-emoji: ^1.8.1
+    normalize-path: ^3.0.0
+    object-hash: ^2.1.1
+    parse-glob: ^3.0.4
+    postcss: ^7
+    postcss-functions: ^3
+    postcss-js: ^2
+    postcss-nested: ^4
+    postcss-selector-parser: ^6.0.4
+    postcss-value-parser: ^4.1.0
+    pretty-hrtime: ^1.0.3
+    quick-lru: ^5.1.1
+    reduce-css-calc: ^2.1.8
+    resolve: ^1.20.0
+  bin:
+    tailwind: lib/cli.js
+    tailwindcss: lib/cli.js
+  checksum: d7bda1825f45f34683462b52163eded4833846bb84f44d19b9f3c5dbd56b29cd8fe33927cd174e84a7c7188016a2fb5e2e84edcd28dfe55d6e726b38d4fe4cfd
   languageName: node
   linkType: hard
 
