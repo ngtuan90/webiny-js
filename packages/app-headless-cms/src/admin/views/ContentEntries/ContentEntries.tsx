@@ -19,6 +19,7 @@ const SORTERS = [
 ];
 
 export const ContentEntries = ({ contentModel }) => {
+    // TODO: create "useContentEntriesView()" and stop drilling with "listQueryVariables" prop
     const [listQueryVariables, setListQueryVariables] = useState({
         sort: SORTERS[0].value
     });

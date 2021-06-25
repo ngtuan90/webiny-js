@@ -18,6 +18,7 @@ module.exports = {
     },
     rules: {
         "react/prop-types": 0,
+        "react-hooks/exhaustive-deps": 0,
         "import/no-unresolved": 0, // [2, { commonjs: true, amd: true }],
         "@typescript-eslint/explicit-function-return-type": "off",
         "@typescript-eslint/explicit-module-boundary-types": "off",

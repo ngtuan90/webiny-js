@@ -2,11 +2,7 @@ import routes from "./routes";
 import menus from "./menus";
 import icons from "./icons";
 import install from "./install";
-import revisionContent from "./contentDetails/revisionContent";
-import header from "./contentDetails/header";
-import contentForm from "./contentDetails/contentForm";
-import contentFormTransformers from "./contentDetails/contentForm/transformers";
-import contentRevisions from "./contentDetails/contentRevisions";
+import contentFormTransformers from "./transformers";
 import defaultBar from "./editor/defaultBar";
 import formSettings from "./editor/formSettings";
 import apiInformation from "./apiInformation";
@@ -18,11 +14,7 @@ export default () => [
     routes,
     menus,
     icons,
-    header,
-    revisionContent,
-    contentForm,
     contentFormTransformers(),
-    contentRevisions,
     defaultBar,
     formSettings,
     permissionRenderer,

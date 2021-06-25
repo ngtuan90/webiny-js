@@ -9,6 +9,8 @@ import TimeAgo from "timeago-react";
 import pluralize from "pluralize";
 import styled from "@emotion/styled";
 import { i18n } from "@webiny/app/i18n";
+import { useRouter } from "@webiny/react-router";
+import { Form } from "@webiny/form";
 import { Typography } from "@webiny/ui/Typography";
 import * as UIList from "@webiny/ui/List";
 import { ButtonIcon, ButtonSecondary } from "@webiny/ui/Button";
@@ -19,9 +21,7 @@ import { ReactComponent as AddIcon } from "@webiny/app-admin/assets/icons/add-18
 import { ReactComponent as FilterIcon } from "@webiny/app-admin/assets/icons/filter-24px.svg";
 import SearchUI from "@webiny/app-admin/components/SearchUI";
 import { useQuery } from "../../hooks";
-import { useRouter } from "@webiny/react-router";
-import { Form } from "@webiny/form";
-import { createListQuery } from "../components/ContentModelForm/graphql";
+import { createListQuery } from "./ContentEntryForm/graphql";
 import statusLabels from "../../constants/statusLabels";
 
 const t = i18n.ns("app-headless-cms/admin/contents/data-list");

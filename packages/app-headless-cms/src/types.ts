@@ -4,7 +4,7 @@ import { ReactElement, ReactNode } from "react";
 import { BindComponent, FormRenderPropParams, Form, FormOnSubmit } from "@webiny/form";
 import { ApolloClient } from "apollo-client";
 import { IconPrefix, IconName } from "@fortawesome/fontawesome-svg-core";
-import Label from "./admin/views/components/ContentModelForm/ContentFormRender/components/Label";
+import Label from "./admin/views/ContentEntries/ContentEntryForm/ContentFormRender/components/Label";
 
 export interface CmsEditorFieldTypePlugin extends Plugin {
     /**
@@ -155,6 +155,7 @@ export interface CmsEditorFieldTypePlugin extends Plugin {
              */
             queryField?: string;
         };
+        render?(params: any): React.ReactElement;
     };
 }
 

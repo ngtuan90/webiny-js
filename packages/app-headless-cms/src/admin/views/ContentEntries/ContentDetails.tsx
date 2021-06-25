@@ -1,16 +1,23 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { Fragment, useCallback, useMemo, useState } from "react";
 import isEmpty from "lodash/isEmpty";
 import get from "lodash/get";
+import { css } from "emotion";
 import { useRouter } from "@webiny/react-router";
 import styled from "@emotion/styled";
-import { renderPlugins } from "@webiny/app/plugins";
 import { useSnackbar } from "@webiny/app-admin/hooks/useSnackbar";
-import { useQuery } from "../../hooks";
 import EmptyView from "@webiny/app-admin/components/EmptyView";
 import { ButtonDefault, ButtonIcon } from "@webiny/ui/Button";
 import { ReactComponent as AddIcon } from "@webiny/app-admin/assets/icons/add-18px.svg";
 import { i18n } from "@webiny/app/i18n";
-import * as GQL from "../components/ContentModelForm/graphql";
+import { Tab, Tabs } from "@webiny/ui/Tabs";
+import { Elevation } from "@webiny/ui/Elevation";
+import { CircularProgress } from "@webiny/ui/Progress";
+import { useQuery } from "../../hooks";
+import * as GQL from "~/admin/components/ContentEntryForm/graphql";
+import RevisionsList from "./ContentDetails/RevisionsList";
+import Header from "./ContentDetails/header/Header";
+import ContentForm from "./ContentDetails/contentForm/ContentForm";
+import Footer from "./ContentDetails/footer/Footer";
 
 const t = i18n.namespace("app-headless-cms/admin/content-model-entries/details");
 
@@ -21,6 +28,19 @@ const DetailsContainer = styled("div")({
     nav: {
         backgroundColor: "var(--mdc-theme-surface)"
     }
+});
+
+const RenderBlock = styled("div")({
+    position: "relative",
+    zIndex: 0,
+    backgroundColor: "var(--mdc-theme-background)",
+    height: "100%",
+    /*overflow: "scroll",*/
+    padding: 25
+});
+
+const elevationStyles = css({
+    position: "relative"
 });
 
 declare global {
@@ -118,20 +138,40 @@ const ContentDetails = ({ contentModel, canCreate, listQueryVariables }: Content
         );
     }
 
+    const props = {
+        setLoading,
+        getLoading,
+        entry,
+        revisions,
+        refetchContent: getEntry.refetch,
+        contentModel,
+        state, // TODO: remove this crap!
+        setState, // TODO: remove this crap!
+        listQueryVariables
+    };
+
     return (
         <DetailsContainer>
             <test-id data-testid="cms-content-details">
-                {renderPlugins("cms-content-details", {
-                    setLoading,
-                    getLoading,
-                    entry,
-                    revisions,
-                    refetchContent: getEntry.refetch,
-                    contentModel,
-                    state,
-                    setState,
-                    listQueryVariables
-                })}
+                <Tabs>
+                    {({ switchTab }) => (
+                        <Fragment>
+                            <Tab label={"Content"} disabled={getLoading()}>
+                                <RenderBlock>
+                                    <Elevation z={2} className={elevationStyles}>
+                                        {getLoading() && <CircularProgress />}
+                                        <Header {...props} />
+                                        <ContentForm {...props} />
+                                        <Footer {...props} />
+                                    </Elevation>
+                                </RenderBlock>
+                            </Tab>
+                            <Tab label={"Revisions"} disabled={getLoading()}>
+                                <RevisionsList {...props} switchTab={switchTab} />
+                            </Tab>
+                        </Fragment>
+                    )}
+                </Tabs>
             </test-id>
         </DetailsContainer>
     );

@@ -4,7 +4,7 @@ import { useQuery } from "../../hooks";
 import { useRouter } from "@webiny/react-router";
 import { useSnackbar } from "@webiny/app-admin/hooks/useSnackbar";
 import { i18n } from "@webiny/app/i18n";
-import { GET_CONTENT_MODEL } from "../components/ContentModelEditor/Context/graphql";
+import { GET_CONTENT_MODEL } from "../ContentModels/graphql";
 import { ContentEntries } from "./ContentEntries";
 import { CircularProgress } from "@webiny/ui/Progress";
 
