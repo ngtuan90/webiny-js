@@ -1,84 +1,65 @@
-import React, { useMemo, useState } from "react";
-import { LeftPanel, RightPanel, SplitView } from "@webiny/app-admin/components/SplitView";
-import { useSecurity } from "@webiny/app-security";
+import React, { useState } from "react";
+import get from "lodash/get";
+import { useRouter } from "@webiny/react-router";
+import { useSnackbar } from "@webiny/app-admin/hooks/useSnackbar";
 import { i18n } from "@webiny/app/i18n";
-import ContentDataList from "./ContentDataList";
-import ContentDetails from "./ContentDetails";
+import { CircularProgress } from "@webiny/ui/Progress";
+import { LeftPanel, RightPanel, SplitView } from "@webiny/app-admin/components/SplitView";
+import { Provider as ContentEntriesProvider } from "~/admin/views/contentEntries/ContentEntriesContext";
+import { GET_CONTENT_MODEL } from "~/admin/graphql/contentModels";
+import { useQuery } from "../../hooks";
+import ContentEntriesList from "~/admin/views/contentEntries/ContentEntriesList";
+import ContentEntry from "~/admin/views/contentEntries/ContentEntry";
+import { Provider as ContentEntryProvider } from "./ContentEntry/ContentEntryContext";
 
-const t = i18n.ns("app-headless-cms/admin/contents/entries");
+const t = i18n.ns("app-headless-cms/admin/content-entries");
 
-const SORTERS = [
-    {
-        label: t`Newest to oldest`,
-        value: "savedOn_DESC"
-    },
-    {
-        label: t`Oldest to newest`,
-        value: "savedOn_ASC"
-    }
-];
+const ContentEntries = () => {
+    const { match } = useRouter();
+    const [contentModel, setContentModel] = useState<any>();
+    const { history } = useRouter();
+    const modelId = get(match, "params.modelId");
+    const { showSnackbar } = useSnackbar();
 
-export const ContentEntries = ({ contentModel }) => {
-    // TODO: create "useContentEntriesView()" and stop drilling with "listQueryVariables" prop
-    const [listQueryVariables, setListQueryVariables] = useState({
-        sort: SORTERS[0].value
-    });
-    const { identity } = useSecurity();
-
-    const canCreate = useMemo(() => {
-        const permission = identity.getPermission("cms.contentEntry");
-        if (!permission) {
-            return false;
-        }
-
-        if (typeof permission.rwd !== "string") {
-            return true;
-        }
-
-        return permission.rwd.includes("w");
-    }, []);
-
-    // Generate sorters based on current content model
-    const sorters = useMemo(() => {
-        const titleField = contentModel.fields.find(
-            field => field.fieldId === contentModel.titleFieldId
-        );
-        const titleFieldLabel = titleField ? titleField.label : null;
-        if (!titleFieldLabel) {
-            return SORTERS;
-        }
-
-        return [
-            ...SORTERS,
-            {
-                label: t`{titleFieldLabel} A-Z`({ titleFieldLabel }),
-                value: `${contentModel.titleFieldId}_ASC`
-            },
-            {
-                label: t`{titleFieldLabel} Z-A`({ titleFieldLabel }),
-                value: `${contentModel.titleFieldId}_DESC`
+    useQuery(GET_CONTENT_MODEL, {
+        skip: !modelId,
+        variables: { modelId },
+        onCompleted: data => {
+            const contentModel = get(data, "getContentModel.data");
+            if (contentModel) {
+                return setContentModel(contentModel);
             }
-        ];
-    }, [contentModel]);
 
+            history.push("/cms/content-models");
+            showSnackbar(
+                t`Could not load content for model "{modelId}". Redirecting...`({
+                    modelId
+                })
+            );
+        }
+    });
+
+    if (!contentModel) {
+        return <CircularProgress label={t`Loading content model...`} />;
+    }
+
+    // Added "key" prop which somehow fixes the "Internal Error: may not update existing query string in store" error
+    // that would occur when doing a search on a different content model (via the global search bar).
+    // Didn't find what was actually causing the issue, nor did the Google return any results for the error above.
     return (
-        <SplitView>
-            <LeftPanel span={4}>
-                <ContentDataList
-                    listQueryVariables={listQueryVariables}
-                    setListQueryVariables={setListQueryVariables}
-                    contentModel={contentModel}
-                    canCreate={canCreate}
-                    sorters={sorters}
-                />
-            </LeftPanel>
-            <RightPanel span={8}>
-                <ContentDetails
-                    listQueryVariables={listQueryVariables}
-                    contentModel={contentModel}
-                    canCreate={canCreate}
-                />
-            </RightPanel>
-        </SplitView>
+        <ContentEntriesProvider contentModel={contentModel} key={contentModel.modelId}>
+            <SplitView>
+                <LeftPanel span={4}>
+                    <ContentEntriesList />
+                </LeftPanel>
+                <RightPanel span={8}>
+                    <ContentEntryProvider>
+                        <ContentEntry />
+                    </ContentEntryProvider>
+                </RightPanel>
+            </SplitView>
+        </ContentEntriesProvider>
     );
 };
+
+export default ContentEntries;
