@@ -4,7 +4,7 @@ import { Elevation } from "@webiny/ui/Elevation";
 import { i18n } from "@webiny/app/i18n";
 import { CmsEditorContentTab } from "~/types";
 import { useContentModelEditor } from "~/admin/components/ContentModelEditor/useContentModelEditor";
-import { ContentEntryForm } from "~/admin/views/ContentEntries/ContentEntryForm/ContentEntryForm";
+import { ContentEntryFormPreview } from "../ContentEntryForm/ContentEntryFormPreview";
 
 const t = i18n.ns("app-headless-cms/admin/components/editor/tabs/preview");
 
@@ -28,7 +28,7 @@ export const PreviewTab: CmsEditorContentTab = ({ activeTab }) => {
     return (
         <Elevation z={1} className={formPreviewWrapper}>
             {fields && fields.length && activeTab ? (
-                <ContentEntryForm contentModel={data} />
+                <ContentEntryFormPreview contentModel={data} />
             ) : (
                 <div className={style.noFieldsMessage}>
                     {t`Before previewing the form, please add at least one field to the content model.`}

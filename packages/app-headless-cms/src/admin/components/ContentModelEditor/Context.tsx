@@ -5,7 +5,7 @@ import cloneDeep from "lodash/cloneDeep";
 import { ApolloClient } from "apollo-client";
 import { useRouter } from "@webiny/react-router";
 import { useSnackbar } from "@webiny/app-admin/hooks/useSnackbar";
-import { GET_CONTENT_MODEL, UPDATE_CONTENT_MODEL } from "~/admin/views/ContentModels/graphql";
+import { GET_CONTENT_MODEL, UPDATE_CONTENT_MODEL } from "~/admin/graphql/contentModels";
 import { LIST_MENU_CONTENT_GROUPS_MODELS } from "~/admin/viewsGraphql";
 import { CmsEditorContentModel, CmsEditorField } from "~/types";
 

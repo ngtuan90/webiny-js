@@ -8,6 +8,7 @@ import formSettings from "./editor/formSettings";
 import apiInformation from "./apiInformation";
 import permissionRenderer from "./permissionRenderer";
 import getObjectId from "./getObjectId";
+import contentEntryHeader from "../views/contentEntries/ContentEntry/header";
 
 export default () => [
     install,
@@ -19,5 +20,6 @@ export default () => [
     formSettings,
     permissionRenderer,
     apiInformation,
-    getObjectId
+    getObjectId,
+    contentEntryHeader
 ];

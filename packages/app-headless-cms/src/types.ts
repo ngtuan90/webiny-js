@@ -1,10 +1,10 @@
 import * as React from "react";
 import { Plugin } from "@webiny/plugins/types";
 import { ReactElement, ReactNode } from "react";
-import { BindComponent, FormRenderPropParams, Form, FormOnSubmit } from "@webiny/form";
+import { BindComponent, FormRenderPropParams, Form } from "@webiny/form";
 import { ApolloClient } from "apollo-client";
 import { IconPrefix, IconName } from "@fortawesome/fontawesome-svg-core";
-import Label from "./admin/views/ContentEntries/ContentEntryForm/ContentFormRender/components/Label";
+import Label from "./admin/components/ContentEntryForm/Label";
 
 export interface CmsEditorFieldTypePlugin extends Plugin {
     /**
@@ -279,7 +279,6 @@ export interface CmsEditorContentModel {
     settings: any;
     status: string;
     savedOn: string;
-    revisions: any[];
     meta: any;
 }
 
@@ -289,6 +288,19 @@ export interface CmsEditorContentEntry {
     [key: string]: any;
     meta: {
         title: string;
+        publishedOn: string;
+        locked: boolean;
+        status: "draft" | "published" | "unpublished" | "changesRequested" | "reviewRequested";
+        version: number;
+    };
+}
+
+export interface CmsContentEntryRevision {
+    id: string;
+    savedOn: string;
+    meta: {
+        title: string;
+        publishedOn: string;
         locked: boolean;
         status: "draft" | "published" | "unpublished" | "changesRequested" | "reviewRequested";
         version: number;
@@ -321,17 +333,6 @@ export interface CmsEditorFieldValidatorPlugin extends Plugin {
 export type CmsEditorContentTab = React.FunctionComponent<{ activeTab: boolean }>;
 
 // ------------------------------------------------------------------------------------------------------------
-
-export interface CmsContentModelFormProps {
-    loading?: boolean;
-    onForm?: (form: any) => void;
-    contentModel: CmsEditorContentModel;
-    entry?: { [key: string]: any };
-    onSubmit?: FormOnSubmit;
-    onChange?: FormOnSubmit;
-    invalidFields?: Record<string, string>;
-}
-
 export interface CmsEditorFieldOptionPlugin extends Plugin {
     type: "cms-editor-field-option";
     render(): ReactElement;

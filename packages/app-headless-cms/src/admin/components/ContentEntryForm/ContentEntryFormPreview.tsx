@@ -1,32 +1,28 @@
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useMemo } from "react";
 import styled from "@emotion/styled";
 import { Form, FormRenderPropParams } from "@webiny/form";
 import { plugins } from "@webiny/plugins";
 import { Cell, Grid } from "@webiny/ui/Grid";
-import { CircularProgress } from "@webiny/ui/Progress";
 import RenderFieldElement from "./RenderFieldElement";
-import { CmsContentFormRendererPlugin, CmsEditorFieldRendererPlugin } from "~/types";
-import { useContentEntryForm, UseContentEntryFormParams } from "./useContentEntryForm";
+import {
+    CmsContentFormRendererPlugin,
+    CmsEditorContentModel,
+    CmsEditorFieldRendererPlugin
+} from "~/types";
+import { useContentEntryFormFields } from "~/admin/components/ContentEntryForm/useContentEntryFormFields";
 
 const FormWrapper = styled("div")({
     height: "calc(100vh - 260px)",
     overflow: "auto"
 });
 
-interface ContentEntryFormProps extends UseContentEntryFormParams {
-    onForm?: (form: Form) => void;
+interface Props {
+    contentModel: CmsEditorContentModel;
 }
 
-export const ContentEntryForm = ({ onForm, ...props }: ContentEntryFormProps) => {
+export const ContentEntryFormPreview = (props: Props) => {
     const { contentModel } = props;
-    const { loading, data, fields, onChange, onSubmit, invalidFields } = useContentEntryForm(props);
-
-    // All form fields - an array of rows where each row is an array that contain fields.
-    const ref = useRef(null);
-
-    useEffect(() => {
-        typeof onForm === "function" && onForm(ref.current);
-    }, []);
+    const { fields } = useContentEntryFormFields(props);
 
     const renderPlugins = useMemo(
         () => plugins.byType<CmsEditorFieldRendererPlugin>("cms-editor-field-renderer"),
@@ -78,16 +74,9 @@ export const ContentEntryForm = ({ onForm, ...props }: ContentEntryFormProps) =>
     );
 
     return (
-        <Form
-            onChange={onChange}
-            onSubmit={onSubmit}
-            data={data}
-            ref={ref}
-            invalidFields={invalidFields}
-        >
+        <Form>
             {formProps => (
                 <FormWrapper data-testid={"cms-content-form"}>
-                    {loading && <CircularProgress />}
                     {formRenderer ? renderCustomLayout(formProps) : renderDefaultLayout(formProps)}
                 </FormWrapper>
             )}
