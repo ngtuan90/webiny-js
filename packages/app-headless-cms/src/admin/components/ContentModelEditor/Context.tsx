@@ -134,7 +134,6 @@ export function ContentModelEditorProvider({ children, apolloClient, modelId }: 
     };
 
     useEffect(() => {
-        console.log("Get content model", modelId);
         getContentModel(modelId).catch(() => {
             history.push(`/cms/content-models`);
             showSnackbar(`Could not load content model with given ID.`);

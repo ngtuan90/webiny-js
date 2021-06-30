@@ -14,7 +14,7 @@ const plugin: CmsEditorFieldTypePlugin = {
         label: t`Object`,
         description: t`Store objects.`,
         icon: <BooleanIcon />,
-        allowMultipleValues: false,
+        allowMultipleValues: true,
         allowPredefinedValues: false,
         multipleValuesLabel: t`Use as a repeatable object`,
         createField() {

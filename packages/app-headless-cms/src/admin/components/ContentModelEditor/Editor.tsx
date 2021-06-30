@@ -59,7 +59,6 @@ const formTabs = css({
 
 export const Editor = () => {
     const { data, setData, isPristine } = useContentModelEditor();
-    console.log({ data, isPristine });
 
     const tabsRef = useRef(null);
     const [activeTabIndex, setActiveTabIndex] = useState(0);

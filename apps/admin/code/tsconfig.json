@@ -19,6 +19,10 @@
       "@webiny/app-plugin-admin-welcome-screen": [
         "../../../packages/app-plugin-admin-welcome-screen"
       ],
+      "@webiny/app-page-builder/*": ["../../../packages/app-page-builder/src/*"],
+      "@webiny/app-page-builder": ["../../../packages/app-page-builder/src"],
+      "@webiny/app-headless-cms/*": ["../../../packages/app-headless-cms/src/*"],
+      "@webiny/app-headless-cms": ["../../../packages/app-headless-cms/src"],
       "@webiny/app-tenancy/*": ["../../../packages/app-tenancy/src/*"],
       "@webiny/app-tenancy": ["../../../packages/app-tenancy/src"]
     },

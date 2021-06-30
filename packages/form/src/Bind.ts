@@ -12,7 +12,7 @@ export type BindComponentRenderPropValidation = {
 export type BindComponentRenderPropOnChange = (value: any) => Promise<void>;
 
 export type BindComponentRenderProp = {
-    form: Object;
+    form: Form;
     onChange: BindComponentRenderPropOnChange;
     value: any;
     validate: () => Promise<boolean | any>;

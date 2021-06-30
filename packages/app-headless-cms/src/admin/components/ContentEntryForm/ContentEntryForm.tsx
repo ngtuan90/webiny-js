@@ -1,12 +1,12 @@
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import styled from "@emotion/styled";
 import { Form, FormRenderPropParams } from "@webiny/form";
 import { plugins } from "@webiny/plugins";
-import { Cell, Grid } from "@webiny/ui/Grid";
 import { CircularProgress } from "@webiny/ui/Progress";
 import RenderFieldElement from "./RenderFieldElement";
-import { CmsContentFormRendererPlugin, CmsEditorFieldRendererPlugin } from "~/types";
+import { CmsContentFormRendererPlugin } from "~/types";
 import { useContentEntryForm, UseContentEntryFormParams } from "./useContentEntryForm";
+import { Fields } from "./Fields";
 
 const FormWrapper = styled("div")({
     height: "calc(100vh - 260px)",
@@ -19,44 +19,24 @@ interface ContentEntryFormProps extends UseContentEntryFormParams {
 
 export const ContentEntryForm = ({ onForm, ...props }: ContentEntryFormProps) => {
     const { contentModel } = props;
-    const { loading, data, fields, onChange, onSubmit, invalidFields } = useContentEntryForm(props);
+    const {
+        loading,
+        data,
+        onChange,
+        onSubmit,
+        invalidFields,
+        renderPlugins
+    } = useContentEntryForm(props);
 
-    // All form fields - an array of rows where each row is an array that contain fields.
     const ref = useRef(null);
 
     useEffect(() => {
         typeof onForm === "function" && onForm(ref.current);
     }, []);
 
-    const renderPlugins = useMemo(
-        () => plugins.byType<CmsEditorFieldRendererPlugin>("cms-editor-field-renderer"),
-        []
-    );
-
     const formRenderer = plugins
         .byType<CmsContentFormRendererPlugin>("cms-content-form-renderer")
         .find(pl => pl.modelId === contentModel.modelId);
-
-    const renderDefaultLayout = useCallback(({ Bind }: FormRenderPropParams) => {
-        return (
-            <Grid>
-                {fields.map((row, rowIndex) => (
-                    <React.Fragment key={rowIndex}>
-                        {row.map(field => (
-                            <Cell span={Math.floor(12 / row.length)} key={field.id}>
-                                <RenderFieldElement
-                                    field={field}
-                                    Bind={Bind}
-                                    renderPlugins={renderPlugins}
-                                    contentModel={contentModel}
-                                />
-                            </Cell>
-                        ))}
-                    </React.Fragment>
-                ))}
-            </Grid>
-        );
-    }, []);
 
     const renderCustomLayout = useCallback(
         (formRenderProps: FormRenderPropParams) => {
@@ -88,7 +68,17 @@ export const ContentEntryForm = ({ onForm, ...props }: ContentEntryFormProps) =>
             {formProps => (
                 <FormWrapper data-testid={"cms-content-form"}>
                     {loading && <CircularProgress />}
-                    {formRenderer ? renderCustomLayout(formProps) : renderDefaultLayout(formProps)}
+                    {formRenderer ? (
+                        renderCustomLayout(formProps)
+                    ) : (
+                        <Fields
+                            contentModel={contentModel}
+                            renderPlugins={renderPlugins}
+                            fields={contentModel.fields}
+                            layout={contentModel.layout}
+                            {...formProps}
+                        />
+                    )}
                 </FormWrapper>
             )}
         </Form>

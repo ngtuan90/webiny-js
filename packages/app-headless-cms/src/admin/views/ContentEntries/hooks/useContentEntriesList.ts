@@ -35,20 +35,22 @@ export function useContentEntriesList() {
             if (typeof search !== "string" && !filter) {
                 return;
             }
-            if (filter !== search) {
-                query.set("search", filter);
-                // We use the title field with the "contains" operator for doing basic searches.
-                const searchField = contentModel.titleFieldId + "_contains";
-                setListQueryVariables(prev => {
-                    const next = cloneDeep(prev);
-                    if (filter) {
-                        set(next, `where.${searchField}`, filter);
-                    } else {
-                        unset(next, `where.${searchField}`);
-                    }
 
-                    return next;
-                });
+            // We use the title field with the "contains" operator for doing basic searches.
+            const searchField = contentModel.titleFieldId + "_contains";
+            setListQueryVariables(prev => {
+                const next = cloneDeep(prev);
+                if (filter) {
+                    set(next, `where.${searchField}`, filter);
+                } else {
+                    unset(next, `where.${searchField}`);
+                }
+
+                return next;
+            });
+            
+            if (search !== filter) {
+                query.set("search", filter);
                 history.push(`${baseUrl}?${query.toString()}`);
             }
         }, 250),
@@ -60,8 +62,9 @@ export function useContentEntriesList() {
         if (searchQuery) {
             setFilter(searchQuery);
         }
-    }, [baseUrl]);
+    }, [baseUrl, searchQuery]);
 
+    // When filter changes, run GQL query
     useEffect(() => updateSearch({ filter, query }), [baseUrl, filter]);
 
     // Generate a query based on current content model

@@ -1,6 +1,5 @@
 import { Dispatch, SetStateAction, useCallback, useMemo, useState } from "react";
 import pick from "lodash/pick";
-import cloneDeep from "lodash/cloneDeep";
 import { useRouter } from "@webiny/react-router";
 import { useSnackbar } from "@webiny/app-admin/hooks/useSnackbar";
 import { FormOnSubmit } from "@webiny/form";
@@ -8,18 +7,18 @@ import * as GQL from "~/admin/graphql/contentEntries";
 import { useMutation } from "~/admin/hooks";
 import * as GQLCache from "~/admin/views/contentEntries/ContentEntry/cache";
 import { prepareFormData } from "~/admin/views/contentEntries/ContentEntry/prepareFormData";
-import { CmsEditorContentModel, CmsEditorField } from "~/types";
+import { CmsEditorContentModel, CmsEditorFieldRendererPlugin } from "~/types";
 import { useContentEntry } from "~/admin/views/contentEntries/hooks/useContentEntry";
-import { useContentEntryFormFields } from "~/admin/components/ContentEntryForm/useContentEntryFormFields";
+import { plugins } from "@webiny/plugins";
 
 interface UseContentEntryForm {
     data: Record<string, any>;
-    fields: CmsEditorField[][];
     loading: boolean;
     setLoading: Dispatch<SetStateAction<boolean>>;
     onChange: FormOnSubmit;
     onSubmit: (data: Record<string, any>) => void;
     invalidFields: Record<string, string>;
+    renderPlugins: CmsEditorFieldRendererPlugin[];
 }
 
 export interface UseContentEntryFormParams {
@@ -30,13 +29,17 @@ export interface UseContentEntryFormParams {
 }
 
 export function useContentEntryForm(params: UseContentEntryFormParams): UseContentEntryForm {
-    const { fields } = useContentEntryFormFields({ contentModel: params.contentModel });
     const { listQueryVariables } = useContentEntry();
     const { contentModel, entry } = params;
     const { history } = useRouter();
     const { showSnackbar } = useSnackbar();
     const [invalidFields, setInvalidFields] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(false);
+
+    const renderPlugins = useMemo(
+        () => plugins.byType<CmsEditorFieldRendererPlugin>("cms-editor-field-renderer"),
+        []
+    );
 
     const goToRevision = useCallback(id => {
         history.push(`/cms/content-entries/${contentModel.modelId}?id=${encodeURIComponent(id)}`);
@@ -204,11 +207,11 @@ export function useContentEntryForm(params: UseContentEntryFormParams): UseConte
 
     return {
         data: entry ? entry : getDefaultValues(),
-        fields,
         loading,
         setLoading,
         onChange: params.onChange,
         onSubmit,
-        invalidFields
+        invalidFields,
+        renderPlugins
     };
 }

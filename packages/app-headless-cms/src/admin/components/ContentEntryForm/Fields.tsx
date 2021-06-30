@@ -1,23 +1,33 @@
-// @ts-nocheck
-import {FormRenderPropParams} from "@webiny/form";
-import {Cell, Grid} from "@webiny/ui/Grid";
 import React from "react";
+import { BindComponent, FormRenderPropParams } from "@webiny/form";
+import { Cell, Grid } from "@webiny/ui/Grid";
 import RenderFieldElement from "./RenderFieldElement";
-import {CmsEditorField} from "~/types";
+import {
+    CmsEditorContentModel,
+    CmsEditorField,
+    CmsEditorFieldRendererPlugin,
+    CmsEditorFieldsLayout
+} from "~/types";
 
-interface Props extends FormRenderPropParams {
-    fields: CmsEditorField[][]
+interface Props {
+    Bind: BindComponent;
+    contentModel: CmsEditorContentModel;
+    fields: CmsEditorField[];
+    layout: CmsEditorFieldsLayout;
+    renderPlugins: CmsEditorFieldRendererPlugin[];
 }
 
-export const Fields = ({ Bind, fields }: Props) => {
+const getFieldById = (fields, id) => fields.find(field => field.id === id);
+
+export const Fields = ({ Bind, fields, layout, renderPlugins, contentModel }: Props) => {
     return (
         <Grid>
-            {fields.map((row, rowIndex) => (
+            {layout.map((row, rowIndex) => (
                 <React.Fragment key={rowIndex}>
-                    {row.map(field => (
-                        <Cell span={Math.floor(12 / row.length)} key={field.id}>
+                    {row.map(fieldId => (
+                        <Cell span={Math.floor(12 / row.length)} key={fieldId}>
                             <RenderFieldElement
-                                field={field}
+                                field={getFieldById(fields, fieldId)}
                                 Bind={Bind}
                                 renderPlugins={renderPlugins}
                                 contentModel={contentModel}
@@ -27,5 +37,5 @@ export const Fields = ({ Bind, fields }: Props) => {
                 </React.Fragment>
             ))}
         </Grid>
-    )
-}
+    );
+};

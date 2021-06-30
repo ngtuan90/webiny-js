@@ -18,12 +18,13 @@ const style = {
 type Props = {
     field: CmsEditorField;
     getBind(index?: number): React.ComponentType<any>;
+    showLabel?: boolean;
     Label: React.ComponentType<any>;
     children: (params: any) => React.ReactNode;
     emptyValue?: any;
 };
 
-const DynamicSection = ({ field, getBind, Label, children, emptyValue = "" }: Props) => {
+const DynamicSection = ({ field, getBind, Label, children, showLabel = true, emptyValue = "" }: Props) => {
     const Bind = getBind();
     const FirstFieldBind = getBind(0);
 
@@ -42,11 +43,12 @@ const DynamicSection = ({ field, getBind, Label, children, emptyValue = "" }: Pr
                     <Grid>
                         <Cell span={12}>
                             {/* We always render the first item, for better UX */}
-                            {field.label && <Label>{field.label}</Label>}
+                            {showLabel && field.label && <Label>{field.label}</Label>}
                             <FirstFieldBind>
                                 {bindIndex =>
                                     /* We bind it to index "0", so when you start typing, that index in parent array will be populated */
                                     children({
+                                        Bind: FirstFieldBind,
                                         field,
                                         // "index" contains Bind props for this particular item in the array
                                         // "field" contains Bind props for the main (parent) field.
@@ -67,6 +69,7 @@ const DynamicSection = ({ field, getBind, Label, children, emptyValue = "" }: Pr
                                     <BindField>
                                         {bindIndex =>
                                             children({
+                                                Bind: BindField,
                                                 field,
                                                 bind: { index: bindIndex, field: bindField },
                                                 index: realIndex

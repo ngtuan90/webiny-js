@@ -43,9 +43,6 @@ const ContentEntries = () => {
         return <CircularProgress label={t`Loading content model...`} />;
     }
 
-    // Added "key" prop which somehow fixes the "Internal Error: may not update existing query string in store" error
-    // that would occur when doing a search on a different content model (via the global search bar).
-    // Didn't find what was actually causing the issue, nor did the Google return any results for the error above.
     return (
         <ContentEntriesProvider contentModel={contentModel} key={contentModel.modelId}>
             <SplitView>

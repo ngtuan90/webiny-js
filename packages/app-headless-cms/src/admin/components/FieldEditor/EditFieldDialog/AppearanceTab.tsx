@@ -53,7 +53,7 @@ const AppearanceTab = props => {
                 <Cell
                     span={12}
                     className={style.noComponentsMessage}
-                >{t`There are no component that can render this field.`}</Cell>
+                >{t`There are no components that can render this field.`}</Cell>
             </Grid>
         );
     }
