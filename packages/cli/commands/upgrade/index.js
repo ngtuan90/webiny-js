@@ -17,31 +17,12 @@ module.exports = [
                         describe: `A version to which you want to upgrade`,
                         type: "string"
                     });
+                    yargs.positional("skip-checks", {
+                        describe: `Skip initial version-specific checks and force the upgrade to be applied.`,
+                        type: "boolean"
+                    });
                 },
                 async argv => {
-                    // Before doing any upgrading, there must not be any active changes in the current branch.
-                    let gitStatus = "";
-                    try {
-                        let { stdout } = execa.sync("git", ["status", "--porcelain"]);
-                        gitStatus = stdout.trim();
-                    } catch {}
-
-                    if (gitStatus) {
-                        console.error(
-                            red("This git repository has untracked files or uncommitted changes:") +
-                                "\n\n" +
-                                gitStatus
-                                    .split("\n")
-                                    .map(line => line.match(/ .*/g)[0].trim())
-                                    .join("\n") +
-                                "\n\n" +
-                                red(
-                                    "Remove untracked files, stash or commit any changes, and try again."
-                                )
-                        );
-                        process.exit(1);
-                    }
-
                     const plugin = context.plugins
                         .byType("cli-upgrade")
                         .find(plugin => plugin.version === argv.targetVersion);
@@ -54,17 +35,42 @@ module.exports = [
                         );
                     }
 
-                    if (typeof plugin.canUpgrade === "function") {
+                    if (!argv.skipChecks) {
+                        // Before doing any upgrading, there must not be any active changes in the current branch.
+                        let gitStatus = "";
                         try {
-                            const canUpgrade = await plugin.canUpgrade(argv, context);
-                            if (canUpgrade === false) {
-                                throw new Error();
-                            }
-                        } catch (ex) {
-                            const msg = ex.message || "unknown";
-                            throw new Error(
-                                `Cannot upgrade to ${argv.targetVersion}. Reason: ${msg}`
+                            let { stdout } = execa.sync("git", ["status", "--porcelain"]);
+                            gitStatus = stdout.trim();
+                        } catch {}
+
+                        if (gitStatus) {
+                            console.error(
+                                red("This git repository has untracked files or uncommitted changes:") +
+                                "\n\n" +
+                                gitStatus
+                                    .split("\n")
+                                    .map(line => line.match(/ .*/g)[0].trim())
+                                    .join("\n") +
+                                "\n\n" +
+                                red(
+                                    "Remove untracked files, stash or commit any changes, and try again."
+                                )
                             );
+                            process.exit(1);
+                        }
+
+                        if (typeof plugin.canUpgrade === "function") {
+                            try {
+                                const canUpgrade = await plugin.canUpgrade(argv, context);
+                                if (canUpgrade === false) {
+                                    throw new Error();
+                                }
+                            } catch (ex) {
+                                const msg = ex.message || "unknown";
+                                throw new Error(
+                                    `Cannot upgrade to ${argv.targetVersion}. Reason: ${msg}`
+                                );
+                            }
                         }
                     }
 
