@@ -45,16 +45,18 @@ module.exports = [
 
                         if (gitStatus) {
                             console.error(
-                                red("This git repository has untracked files or uncommitted changes:") +
-                                "\n\n" +
-                                gitStatus
-                                    .split("\n")
-                                    .map(line => line.match(/ .*/g)[0].trim())
-                                    .join("\n") +
-                                "\n\n" +
                                 red(
-                                    "Remove untracked files, stash or commit any changes, and try again."
-                                )
+                                    "This git repository has untracked files or uncommitted changes:"
+                                ) +
+                                    "\n\n" +
+                                    gitStatus
+                                        .split("\n")
+                                        .map(line => line.match(/ .*/g)[0].trim())
+                                        .join("\n") +
+                                    "\n\n" +
+                                    red(
+                                        "Remove untracked files, stash or commit any changes, and try again."
+                                    )
                             );
                             process.exit(1);
                         }
