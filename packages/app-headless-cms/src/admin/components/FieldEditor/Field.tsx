@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useCallback, useEffect } from "react";
 import { css } from "emotion";
 import styled from "@emotion/styled";
 import { IconButton } from "@webiny/ui/Button";
@@ -56,8 +56,8 @@ const menuStyles = css({
 
 const allowedTitleFieldTypes = ["text", "number"];
 
-const isFieldAllowedToBeTitle = (field: CmsEditorField) => {
-    if (field.multipleValues) {
+const isFieldAllowedToBeTitle = (field: CmsEditorField, parent: any) => {
+    if (field.multipleValues || parent) {
         return false;
     } else if (allowedTitleFieldTypes.includes(field.type) === false) {
         return false;
@@ -66,10 +66,26 @@ const isFieldAllowedToBeTitle = (field: CmsEditorField) => {
 };
 
 const Field = props => {
-    const { field, onEdit, onDelete } = props;
+    const { field, onEdit, parent } = props;
     const { showSnackbar } = useSnackbar();
     const { setData, data } = useContentModelEditor();
     const { getFieldPlugin } = useFieldEditor();
+
+    const onDelete = useCallback(() => {
+        props.onDelete(field);
+    }, [field.fieldId]);
+
+    const setAsTitle = useCallback(async () => {
+        const response = await setData(data => {
+            return { ...data, titleFieldId: field.fieldId };
+        });
+
+        if (response.error) {
+            return showSnackbar(response.error.message);
+        }
+
+        showSnackbar(t`Title field set successfully.`);
+    }, [field.fieldId]);
 
     const fieldPlugin = getFieldPlugin(field.type);
     const editorFieldOptionPlugins = plugins.byType<CmsEditorFieldOptionPlugin>(
@@ -101,20 +117,10 @@ const Field = props => {
                         {editorFieldOptionPlugins.map(pl =>
                             React.cloneElement(pl.render(), { key: pl.name })
                         )}
+                        {/* We only allow this action for top-level fields. */}
                         <MenuItem
-                            disabled={!isFieldAllowedToBeTitle(field)}
-                            onClick={async () => {
-                                const response = await setData(data => {
-                                    data.titleFieldId = field.fieldId;
-                                    return data;
-                                });
-
-                                if (response.error) {
-                                    return showSnackbar(response.error.message);
-                                }
-
-                                showSnackbar(t`Title field set successfully.`);
-                            }}
+                            disabled={!isFieldAllowedToBeTitle(field, parent)}
+                            onClick={setAsTitle}
                         >
                             <ListItemGraphic>
                                 <Icon icon={<TitleIcon />} />
@@ -125,7 +131,7 @@ const Field = props => {
                             disabled={lockedFields.some(
                                 lockedField => lockedField.fieldId === field.fieldId
                             )}
-                            onClick={() => onDelete(field)}
+                            onClick={onDelete}
                         >
                             <ListItemGraphic>
                                 <Icon icon={<DeleteIcon />} />
@@ -144,4 +150,4 @@ const Field = props => {
     );
 };
 
-export default Field;
+export default React.memo(Field);

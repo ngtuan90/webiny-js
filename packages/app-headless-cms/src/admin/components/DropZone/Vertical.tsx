@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "@emotion/styled";
 import Droppable from "../Droppable";
-import { DragObjectWithType } from "react-dnd";
+import { DragSource } from "~/admin/components/FieldEditor/FieldEditorContext";
 
 const InnerDivVertical = styled("div")({
     position: "absolute",
@@ -56,7 +56,7 @@ const OuterDivVertical = styled("div")(
 );
 
 type VerticalProps = {
-    onDrop(item: DragObjectWithType): void;
+    onDrop(item: DragSource): void;
     last?: boolean;
     isVisible?: any;
 };

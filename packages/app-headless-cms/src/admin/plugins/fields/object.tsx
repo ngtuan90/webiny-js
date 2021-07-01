@@ -1,5 +1,5 @@
 import React from "react";
-import { ReactComponent as BooleanIcon } from "./icons/toggle_on-black-24px.svg";
+import { ReactComponent as ObjectIcon } from "./icons/ballot_black_24dp.svg";
 import { CmsEditorFieldTypePlugin } from "~/types";
 import { i18n } from "@webiny/app/i18n";
 import { ObjectFields } from "./object/ObjectFields";
@@ -12,8 +12,8 @@ const plugin: CmsEditorFieldTypePlugin = {
     field: {
         type: "object",
         label: t`Object`,
-        description: t`Store objects.`,
-        icon: <BooleanIcon />,
+        description: t`Store nested data structures.`,
+        icon: <ObjectIcon />,
         allowMultipleValues: true,
         allowPredefinedValues: false,
         multipleValuesLabel: t`Use as a repeatable object`,

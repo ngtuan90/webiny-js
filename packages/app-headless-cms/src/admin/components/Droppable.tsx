@@ -1,5 +1,6 @@
 import * as React from "react";
-import { ConnectDropTarget, DragObjectWithType, useDrop } from "react-dnd";
+import { ConnectDropTarget, useDrop } from "react-dnd";
+import { DragSource } from "~/admin/components/FieldEditor/FieldEditorContext";
 
 export type DroppableChildrenFunction = (params: {
     isDragging: boolean;
@@ -14,7 +15,7 @@ export type DroppableProps = {
     isDragging?: boolean;
     isDroppable?: (item: any) => boolean;
     isVisible?: (params: { type: string; item: any; isDragging: boolean }) => boolean;
-    onDrop?: (item: DragObjectWithType) => void;
+    onDrop?: (item: DragSource) => void;
 };
 
 const Droppable = React.memo((props: DroppableProps) => {
@@ -28,7 +29,7 @@ const Droppable = React.memo((props: DroppableProps) => {
         }),
         drop(item, monitor) {
             if (typeof onDrop === "function") {
-                onDrop(monitor.getItem());
+                return onDrop(monitor.getItem());
             }
         }
     });

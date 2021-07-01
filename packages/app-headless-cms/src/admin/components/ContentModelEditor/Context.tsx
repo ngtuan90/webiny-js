@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useReducer } from "react";
 import get from "lodash/get";
 import pick from "lodash/pick";
-import cloneDeep from "lodash/cloneDeep";
 import { ApolloClient } from "apollo-client";
 import { useRouter } from "@webiny/react-router";
 import { useSnackbar } from "@webiny/app-admin/hooks/useSnackbar";
@@ -110,7 +109,7 @@ export function ContentModelEditorProvider({ children, apolloClient, modelId }: 
      */
     const setData = (setter: Function, saveModel = false) => {
         setPristine(false);
-        const data = setter(cloneDeep(state.data));
+        const data = setter(state.data);
         dispatch({ type: "data", data });
         return saveModel !== false && saveContentModel(data);
     };
@@ -128,7 +127,7 @@ export function ContentModelEditorProvider({ children, apolloClient, modelId }: 
 
         setData(() => {
             setPristine(true);
-            return cloneDeep(data);
+            return data;
         }, false);
         return response;
     };

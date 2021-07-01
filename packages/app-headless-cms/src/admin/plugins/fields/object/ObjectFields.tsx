@@ -13,11 +13,12 @@ export const ObjectFields = ({ field }) => {
             });
             updateField(updatedField);
         },
-        [field.id]
+        [field.fieldId]
     );
 
     return (
         <FieldEditor
+            parent={field}
             fields={field.settings.fields}
             layout={field.settings.layout}
             onChange={onChange}

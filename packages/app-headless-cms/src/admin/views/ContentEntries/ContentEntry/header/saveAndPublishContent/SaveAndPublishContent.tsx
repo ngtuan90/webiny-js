@@ -37,7 +37,7 @@ const SaveAndPublishButton = () => {
             className={buttonStyles}
             onClick={() => {
                 showConfirmation(async () => {
-                    const entry = (await form.submit()) as CmsEditorContentEntry;
+                    const entry = (await form.current.submit()) as CmsEditorContentEntry;
                     if (!entry) {
                         return;
                     }

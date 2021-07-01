@@ -1,37 +1,37 @@
+import dot from "dot-prop-immutable";
 import { CmsEditorField, CmsEditorFieldId, FieldLayoutPosition } from "~/types";
 import getFieldPosition from "./getFieldPosition";
-
-/**
- * Remove all rows that have zero fields in it.
- * @param data
- */
-const cleanupEmptyRows = data => {
-    data.layout = data.layout.filter(row => row.length > 0);
-};
 
 const moveField = ({ field, position, data }) => {
     const { row, index } = position;
     const fieldId = typeof field === "string" ? field : field.id;
 
     const existingPosition = getFieldPosition({ field: fieldId, data });
+
     if (existingPosition) {
-        data.layout[existingPosition.row].splice(existingPosition.index, 1);
+        data = dot.delete(data, `layout.${existingPosition.row}.${existingPosition.index}`);
     }
 
     // Setting a form field into a new non-existing row.
     if (!data.layout[row]) {
-        data.layout[row] = [fieldId];
-        return;
+        return dot.set(data, `layout.${row}`, [fieldId]);
     }
 
-    // If row exists, we drop the field at the specified index.
+    // Drop the field at the specified index.
     if (index === null) {
         // Create a new row with the new field at the given row index,
-        data.layout.splice(row, 0, [fieldId]);
-        return;
+        return dot.set(data, "layout", layout => {
+            const newLayout = [...layout];
+            newLayout.splice(row, 0, [fieldId]);
+            return newLayout;
+        });
     }
 
-    data.layout[row].splice(index, 0, fieldId);
+    return dot.set(data, `layout.${row}`, layout => {
+        const newLayout = [...layout];
+        newLayout.splice(index, 0, fieldId);
+        return newLayout;
+    });
 };
 
 export default (params: {
@@ -39,6 +39,7 @@ export default (params: {
     position: FieldLayoutPosition;
     data: object;
 }) => {
-    moveField(params);
-    cleanupEmptyRows(params.data);
+    return dot.set(moveField(params), "layout", layout => {
+        return [...layout].filter(row => row.length > 0);
+    });
 };

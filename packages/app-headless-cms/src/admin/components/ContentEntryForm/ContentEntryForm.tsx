@@ -24,8 +24,7 @@ export const ContentEntryForm = ({ onForm, ...props }: ContentEntryFormProps) =>
         data,
         onChange,
         onSubmit,
-        invalidFields,
-        renderPlugins
+        invalidFields
     } = useContentEntryForm(props);
 
     const ref = useRef(null);
@@ -45,7 +44,6 @@ export const ContentEntryForm = ({ onForm, ...props }: ContentEntryFormProps) =>
                     <RenderFieldElement
                         field={field}
                         Bind={formRenderProps.Bind}
-                        renderPlugins={renderPlugins}
                         contentModel={contentModel}
                     />
                 );
@@ -73,7 +71,6 @@ export const ContentEntryForm = ({ onForm, ...props }: ContentEntryFormProps) =>
                     ) : (
                         <Fields
                             contentModel={contentModel}
-                            renderPlugins={renderPlugins}
                             fields={contentModel.fields}
                             layout={contentModel.layout}
                             {...formProps}

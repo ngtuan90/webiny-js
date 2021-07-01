@@ -23,11 +23,9 @@ const style = {
 export const PreviewTab: CmsEditorContentTab = ({ activeTab }) => {
     const { data } = useContentModelEditor();
 
-    const { fields } = data;
-
     return (
         <Elevation z={1} className={formPreviewWrapper}>
-            {fields && fields.length && activeTab ? (
+            {data.fields && data.fields.length && activeTab ? (
                 <ContentEntryFormPreview contentModel={data} />
             ) : (
                 <div className={style.noFieldsMessage}>

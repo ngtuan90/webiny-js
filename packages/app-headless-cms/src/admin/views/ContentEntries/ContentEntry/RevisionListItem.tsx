@@ -123,8 +123,8 @@ const RevisionListItem = ({ revision }: Props) => {
                                 <MenuItem
                                     onClick={() => {
                                         editRevision();
-                                        if (tabs) {
-                                            tabs.switchTab(0);
+                                        if (tabs.current) {
+                                            tabs.current.switchTab(0);
                                         }
                                     }}
                                 >

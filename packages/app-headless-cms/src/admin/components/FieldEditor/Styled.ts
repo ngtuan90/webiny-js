@@ -5,7 +5,7 @@ export const RowContainer = styled("div")({
     position: "relative",
     display: "flex",
     flexDirection: "column",
-    marginBottom: 25,
+    marginBottom: 20,
     borderRadius: 2,
     backgroundColor: "var(--mdc-theme-surface)",
     border: "1px solid var(--mdc-theme-on-background)",

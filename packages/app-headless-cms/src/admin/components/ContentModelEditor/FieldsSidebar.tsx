@@ -44,7 +44,7 @@ const FieldHandle = styled("div")({
 
 const Field = ({ onFieldDragStart, fieldType: { type, label, icon, description } }) => {
     return (
-        <Draggable beginDrag={{ ui: "field", type }}>
+        <Draggable beginDrag={{ type: "newField", fieldType: type }}>
             {({ drag }) => (
                 <div
                     ref={drag}

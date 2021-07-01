@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useCallback } from "react";
 import get from "lodash/get";
 import { Icon } from "@webiny/ui/Icon";
 import { i18n } from "@webiny/app/i18n";
@@ -16,12 +16,15 @@ const t = i18n.namespace("app-headless-cms/admin/components/editor");
 
 const Editor = () => {
     const {
+        parent,
         insertField,
         updateField,
         deleteField,
         fields,
+        noConflict,
         editField,
         onFieldDrop,
+        onEndDrag,
         field,
         dropTarget
     } = useFieldEditor();
@@ -29,13 +32,25 @@ const Editor = () => {
     return (
         <Fragment>
             {fields.length === 0 && (
-                <Center onDrop={item => onFieldDrop(item, { row: 0, index: 0 })}>
+                <Center
+                    onDrop={item => onFieldDrop(item, { row: 0, index: 0 })}
+                    style={{ padding: "5px 0 15px 0" }}
+                >
                     {t`Drop your first field here`}
                 </Center>
             )}
 
             {fields.map((row, index) => (
-                <Draggable beginDrag={{ ui: "row", pos: { row: index } }} key={index}>
+                <Draggable
+                    beginDrag={{
+                        parent: parent ? parent.fieldId : null,
+                        type: "row",
+                        fields: row,
+                        pos: { row: index }
+                    }}
+                    endDrag={onEndDrag}
+                    key={row.map(f => f.fieldId).join(".")}
+                >
                     {(
                         {
                             drag,
@@ -48,21 +63,24 @@ const Editor = () => {
                             </div>
                             <Horizontal
                                 data-testid={`cms-editor-row-droppable-top-${index}`}
+                                isVisible={noConflict()}
                                 onDrop={item => onFieldDrop(item, { row: index, index: null })}
                             />
                             {/* Row start - includes field drop zones and fields */}
                             <Row>
                                 {row.map((field, fieldIndex) => (
                                     <Draggable
-                                        key={fieldIndex}
+                                        key={field.fieldId}
                                         beginDrag={{
-                                            ui: "field",
-                                            type: field.type,
+                                            parent: parent ? parent.fieldId : null,
+                                            type: "field",
+                                            field,
                                             pos: {
                                                 row: index,
                                                 index: fieldIndex
                                             }
                                         }}
+                                        endDrag={onEndDrag}
                                     >
                                         {({ drag }) => (
                                             <div className={fieldContainer} ref={drag}>
@@ -73,15 +91,17 @@ const Editor = () => {
                                                             index: fieldIndex
                                                         })
                                                     }
-                                                    isVisible={item =>
-                                                        item.ui === "field" &&
-                                                        (row.length < 4 ||
-                                                            get(item, "pos.row") === index)
-                                                    }
+                                                    isVisible={noConflict(
+                                                        item =>
+                                                            item.type === "field" &&
+                                                            (row.length < 4 ||
+                                                                get(item, "pos.row") === index)
+                                                    )}
                                                 />
 
                                                 <div className={fieldHandle}>
                                                     <Field
+                                                        parent={parent}
                                                         field={field}
                                                         onEdit={editField}
                                                         onDelete={deleteField}
@@ -92,11 +112,12 @@ const Editor = () => {
                                                 {fieldIndex === row.length - 1 && (
                                                     <Vertical
                                                         last
-                                                        isVisible={item =>
-                                                            item.ui === "field" &&
-                                                            (row.length < 4 ||
-                                                                get(item, "pos.row") === index)
-                                                        }
+                                                        isVisible={noConflict(
+                                                            item =>
+                                                                item.type === "field" &&
+                                                                (row.length < 4 ||
+                                                                    get(item, "pos.row") === index)
+                                                        )}
                                                         onDrop={item =>
                                                             onFieldDrop(item, {
                                                                 row: index,
@@ -115,6 +136,7 @@ const Editor = () => {
                                 <Horizontal
                                     data-testid={`cms-editor-row-droppable-bottom-${index}`}
                                     last
+                                    isVisible={noConflict()}
                                     onDrop={item =>
                                         onFieldDrop(item, {
                                             row: index + 1,
@@ -135,7 +157,7 @@ const Editor = () => {
                     if (field.id) {
                         updateField(field);
                     } else {
-                        insertField(field, dropTarget);
+                        insertField({ field, position: dropTarget });
                     }
                     editField(null);
                 }}
@@ -145,6 +167,7 @@ const Editor = () => {
 };
 
 export interface FieldEditorProps {
+    parent?: CmsEditorField;
     layout: CmsEditorFieldsLayout;
     fields: CmsEditorField[];
     onChange: (params: { fields: CmsEditorField[]; layout: CmsEditorFieldsLayout }) => void;

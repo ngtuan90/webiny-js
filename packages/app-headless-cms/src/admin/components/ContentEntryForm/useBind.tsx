@@ -15,6 +15,8 @@ export function useBind({ Bind: ParentBind, field }) {
     return useCallback(
         (index = -1) => {
             const { parentName } = ParentBind;
+            // If there's a parent name assigned to the given Bind component, we need to include it in the new field "name".
+            // This allows us to have nested fields (like "object" field with nested properties)
             const name = [parentName, field.fieldId, index >= 0 ? index : undefined]
                 .filter(v => v !== undefined)
                 .join(".");
@@ -27,12 +29,17 @@ export function useBind({ Bind: ParentBind, field }) {
             const listValidators = createValidators(field.listValidation || []);
             const defaultValue = field.multipleValues ? [] : undefined;
             const isMultipleValues = index === -1 && field.multipleValues;
+            const inputValidators = isMultipleValues ? listValidators : validators;
 
-            memoizedBindComponents.current[name] = function UseBind({ name: childName, children }) {
+            memoizedBindComponents.current[name] = function UseBind({
+                name: childName,
+                validators: childValidators,
+                children
+            }) {
                 return (
                     <ParentBind
                         name={childName || name}
-                        validators={isMultipleValues ? listValidators : validators}
+                        validators={childValidators || inputValidators}
                         defaultValue={index === -1 ? defaultValue : null}
                     >
                         {bind => {
@@ -75,6 +82,7 @@ export function useBind({ Bind: ParentBind, field }) {
                 );
             };
 
+            // We need to keep track of current field name, to support nested fields.
             memoizedBindComponents.current[name].parentName = name;
 
             return memoizedBindComponents.current[name];

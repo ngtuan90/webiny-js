@@ -1,13 +1,9 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import styled from "@emotion/styled";
 import { Form, FormRenderPropParams } from "@webiny/form";
 import { plugins } from "@webiny/plugins";
 import RenderFieldElement from "./RenderFieldElement";
-import {
-    CmsContentFormRendererPlugin,
-    CmsEditorContentModel,
-    CmsEditorFieldRendererPlugin
-} from "~/types";
+import { CmsContentFormRendererPlugin, CmsEditorContentModel } from "~/types";
 import { Fields } from "~/admin/components/ContentEntryForm/Fields";
 
 const FormWrapper = styled("div")({
@@ -22,11 +18,6 @@ interface Props {
 export const ContentEntryFormPreview = (props: Props) => {
     const { contentModel } = props;
 
-    const renderPlugins = useMemo(
-        () => plugins.byType<CmsEditorFieldRendererPlugin>("cms-editor-field-renderer"),
-        []
-    );
-
     const formRenderer = plugins
         .byType<CmsContentFormRendererPlugin>("cms-content-form-renderer")
         .find(pl => pl.modelId === contentModel.modelId);
@@ -38,7 +29,6 @@ export const ContentEntryFormPreview = (props: Props) => {
                     <RenderFieldElement
                         field={field}
                         Bind={formRenderProps.Bind}
-                        renderPlugins={renderPlugins}
                         contentModel={contentModel}
                     />
                 );
@@ -47,7 +37,7 @@ export const ContentEntryFormPreview = (props: Props) => {
             }, {});
             return formRenderer.render({ ...formRenderProps, contentModel, fields });
         },
-        [formRenderer]
+        [formRenderer, contentModel.fields]
     );
 
     return (
@@ -59,13 +49,20 @@ export const ContentEntryFormPreview = (props: Props) => {
                     ) : (
                         <Fields
                             contentModel={contentModel}
-                            renderPlugins={renderPlugins}
                             fields={contentModel.fields}
                             layout={contentModel.layout}
                             {...formProps}
                         />
                     )}
-                    <pre>{JSON.stringify(formProps.data, null, 2)}</pre>
+                    <pre
+                        style={{
+                            fontFamily: "MonoLisa",
+                            padding: 15,
+                            backgroundColor: "var(--mdc-theme-background)"
+                        }}
+                    >
+                        {JSON.stringify(formProps.data, null, 2)}
+                    </pre>
                 </FormWrapper>
             )}
         </Form>

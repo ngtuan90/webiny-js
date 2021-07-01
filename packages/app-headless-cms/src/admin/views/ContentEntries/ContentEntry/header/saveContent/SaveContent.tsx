@@ -16,7 +16,7 @@ const SaveContentButton = () => {
     return (
         <ButtonSecondary
             data-testid={"cms-content-save-content-button"}
-            onClick={() => form.submit()}
+            onClick={() => form.current.submit()}
         >{t`Save`}</ButtonSecondary>
     );
 };

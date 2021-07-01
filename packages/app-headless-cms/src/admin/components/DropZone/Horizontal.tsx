@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "@emotion/styled";
 import Droppable from "../Droppable";
-import { DragObjectWithType } from "react-dnd";
+import { DragSource } from "~/admin/components/FieldEditor/FieldEditorContext";
 
 const InnerDiv = styled("div")({
     height: 15,
@@ -50,7 +50,7 @@ const OuterDiv = styled("div")(
 );
 
 type HorizontalProps = {
-    onDrop(item: DragObjectWithType): void;
+    onDrop(item: DragSource): void;
     last?: boolean;
     isVisible?: any;
 };

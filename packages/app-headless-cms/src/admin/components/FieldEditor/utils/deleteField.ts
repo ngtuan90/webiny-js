@@ -1,34 +1,35 @@
-import { CmsEditorField, CmsEditorContentModel } from "~/types";
+import dot from "dot-prop-immutable";
+import { CmsEditorField, CmsEditorFieldsLayout } from "~/types";
 
-export default ({ field, data }: { field: CmsEditorField; data: CmsEditorContentModel }) => {
+interface Data {
+    fields: CmsEditorField[];
+    layout: CmsEditorFieldsLayout;
+}
+
+export default ({ field, data }: { field: CmsEditorField; data: Data }) => {
     // Remove the field from fields list...
     const fieldIndex = data.fields.findIndex(item => item.id === field.id);
-    data.fields.splice(fieldIndex, 1);
-    for (let i = 0; i < data.fields.length; i++) {
-        if (data.fields[i].id === field.id) {
-            data.fields[i] = field;
-            break;
-        }
-    }
+    data = dot.delete(data, `fields.${fieldIndex}`) as Data;
 
     // ...and rebuild the layout object.
-    const layout = [];
-    let currentRowIndex = 0;
-    data.layout.forEach(row => {
-        row.forEach(fieldId => {
-            const field = data.fields.find(item => item.id === fieldId);
-            if (!field) {
-                return true;
-            }
-            if (!Array.isArray(layout[currentRowIndex])) {
-                layout[currentRowIndex] = [];
-            }
+    return dot.set(data, "layout", layout => {
+        const newLayout = [];
+        let currentRowIndex = 0;
+        layout.forEach(row => {
+            row.forEach(fieldId => {
+                const field = data.fields.find(item => item.id === fieldId);
+                if (!field) {
+                    return true;
+                }
+                if (!Array.isArray(newLayout[currentRowIndex])) {
+                    newLayout[currentRowIndex] = [];
+                }
 
-            layout[currentRowIndex].push(fieldId);
+                newLayout[currentRowIndex].push(fieldId);
+            });
+            newLayout[currentRowIndex] && newLayout[currentRowIndex].length && currentRowIndex++;
         });
-        layout[currentRowIndex] && layout[currentRowIndex].length && currentRowIndex++;
-    });
 
-    data.layout = layout;
-    return data;
+        return newLayout;
+    });
 };

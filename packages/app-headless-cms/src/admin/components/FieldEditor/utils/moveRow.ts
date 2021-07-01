@@ -1,4 +1,5 @@
-import { CmsEditorContentModel } from "~/types";
+import dot from "dot-prop-immutable";
+import { CmsEditorFieldsLayout } from "~/types";
 
 export default ({
     data,
@@ -7,20 +8,21 @@ export default ({
 }: {
     source: number;
     destination: number;
-    data: CmsEditorContentModel;
+    data: { layout: CmsEditorFieldsLayout };
 }) => {
-    data.layout =
-        source < destination
+    return dot.set(data, "layout", layout => {
+        return source < destination
             ? [
-                  ...data.layout.slice(0, source),
-                  ...data.layout.slice(source + 1, destination),
-                  data.layout[source],
-                  ...data.layout.slice(destination)
+                  ...layout.slice(0, source),
+                  ...layout.slice(source + 1, destination),
+                  layout[source],
+                  ...layout.slice(destination)
               ]
             : [
-                  ...data.layout.slice(0, destination),
-                  data.layout[source],
-                  ...data.layout.slice(destination, source),
-                  ...data.layout.slice(source + 1)
+                  ...layout.slice(0, destination),
+                  layout[source],
+                  ...layout.slice(destination, source),
+                  ...layout.slice(source + 1)
               ];
+    });
 };

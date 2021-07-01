@@ -5,7 +5,6 @@ import DynamicSection from "../DynamicSection";
 import { Cell, Grid } from "@webiny/ui/Grid";
 import { SimpleFormHeader } from "@webiny/app-admin/components/SimpleForm";
 import { Fields } from "~/admin/components/ContentEntryForm/Fields";
-import { useRenderPlugins } from "~/admin/components/ContentEntryForm/useRenderPlugins";
 import { ReactComponent as DeleteIcon } from "~/admin/icons/close.svg";
 import { IconButton } from "@webiny/ui/Button";
 
@@ -23,7 +22,6 @@ const plugin: CmsEditorFieldRendererPlugin = {
         },
         render(props) {
             const { field, contentModel } = props;
-            const renderPlugins = useRenderPlugins();
 
             return (
                 <DynamicSection {...props} emptyValue={{}} showLabel={false}>
@@ -39,14 +37,19 @@ const plugin: CmsEditorFieldRendererPlugin = {
                                     )}
                                 </SimpleFormHeader>
                             </Cell>
-                            <Cell span={12}>
+                            <Cell
+                                span={12}
+                                style={{
+                                    borderLeft: "2px solid var(--mdc-theme-primary)",
+                                    paddingLeft: 10
+                                }}
+                            >
                                 <Fields
                                     Bind={Bind}
                                     {...bind.index}
                                     contentModel={contentModel}
                                     fields={field.settings.fields}
                                     layout={field.settings.layout}
-                                    renderPlugins={renderPlugins}
                                 />
                             </Cell>
                         </Grid>

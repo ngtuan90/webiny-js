@@ -1,7 +1,7 @@
-import * as React from "react";
+import React, { CSSProperties } from "react";
 import styled from "@emotion/styled";
 import Droppable from "./../Droppable";
-import { DragObjectWithType } from "react-dnd";
+import { DragSource } from "~/admin/components/FieldEditor/FieldEditorContext";
 
 // @ts-ignore
 const Container = styled("div")(({ isOver }: { isOver: boolean }) => ({
@@ -30,19 +30,20 @@ const Add = styled("div")(({ isOver }: { isOver: boolean }) => ({
 
 type Props = {
     type?: string;
-    onDrop(item: DragObjectWithType): void;
+    onDrop(item: DragSource): void;
     children: React.ReactNode;
     active?: boolean;
     highlight?: boolean;
+    style?: CSSProperties;
 };
 
-export default function Center({ onDrop, children }: Props) {
+export default function Center({ onDrop, children, style }: Props) {
     return (
         <Droppable onDrop={onDrop}>
             {({ isOver, drop }) => (
                 <div
                     ref={drop}
-                    style={{ width: "100%", height: "100%" }}
+                    style={{ width: "100%", height: "100%", ...style }}
                     data-testid={"cms-editor-first-field-area"}
                 >
                     <Container isOver={isOver}>

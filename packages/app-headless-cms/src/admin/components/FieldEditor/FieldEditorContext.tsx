@@ -1,7 +1,8 @@
-import React, { useCallback, useReducer } from "react";
+import React, { useCallback, useState } from "react";
+import dot from "dot-prop-immutable";
 import shortid from "shortid";
-import useDeepCompareEffect from "use-deep-compare-effect";
 import cloneDeep from "lodash/cloneDeep";
+import useDeepCompareEffect from "use-deep-compare-effect";
 import {
     CmsEditorField,
     CmsEditorFieldId,
@@ -12,7 +13,7 @@ import {
 import { plugins } from "@webiny/plugins";
 import * as utils from "./utils";
 import { FieldEditorProps } from "./FieldEditor";
-import { DragObjectWithType } from "react-dnd";
+import { DragObjectWithType, DragSourceMonitor } from "react-dnd";
 
 interface DropTarget {
     row: number;
@@ -24,13 +25,18 @@ interface Position {
     index: number;
 }
 
-interface DragSource extends DragObjectWithType {
+export interface DragSource extends DragObjectWithType {
+    parent?: string;
     pos: Partial<Position>;
-    ui: string;
+    type: "row" | "field" | "newField";
+    fieldType?: string;
+    field?: CmsEditorField;
+    fields?: CmsEditorField[];
 }
 
 export interface FieldEditorContextValue {
     fields: CmsEditorField[][];
+    noConflict: Function;
     layout: CmsEditorFieldsLayout;
     onChange?: (data: any) => void;
     getFieldsInLayout: () => CmsEditorField[][];
@@ -38,9 +44,11 @@ export interface FieldEditorContextValue {
     getField: (query: Record<string, string>) => CmsEditorField;
     editField: (field: CmsEditorField) => void;
     field: CmsEditorField;
+    parent: CmsEditorField;
     dropTarget?: DropTarget;
     onFieldDrop: (source: Partial<DragSource>, target: DropTarget) => void;
-    insertField: (data: CmsEditorField, position: FieldLayoutPosition) => void;
+    onEndDrag: (item: DragSource, monitor: DragSourceMonitor) => void;
+    insertField: (params: { field: CmsEditorField; position: FieldLayoutPosition }) => void;
     moveField: (params: {
         field: CmsEditorFieldId | CmsEditorField;
         position: FieldLayoutPosition;
@@ -48,7 +56,6 @@ export interface FieldEditorContextValue {
     moveRow: (source: number, destination: number) => void;
     updateField: (field: CmsEditorField) => void;
     deleteField: (field: CmsEditorField) => void;
-    getFieldPosition: (field: CmsEditorFieldId | CmsEditorField) => Position | null;
 }
 
 interface FieldEditorProviderProps extends FieldEditorProps {
@@ -58,56 +65,89 @@ interface FieldEditorProviderProps extends FieldEditorProps {
 export const FieldEditorContext = React.createContext<FieldEditorContextValue>(null);
 
 export const FieldEditorProvider = ({
+    parent,
     fields,
     layout,
     onChange,
     children
 }: FieldEditorProviderProps) => {
-    const [state, setState] = useReducer(
-        (prev, next) => {
-            if (typeof next === "function") {
-                return { ...prev, ...next(cloneDeep(prev)) };
-            }
-            return { ...prev, ...next };
-        },
-        {
-            layout,
-            fields,
-            field: null,
-            dropTarget: null
-        }
-    );
+    const [state, setState] = useState({
+        layout,
+        fields,
+        field: null,
+        dropTarget: null
+    });
 
     useDeepCompareEffect(() => {
         onChange({ fields: state.fields, layout: state.layout });
     }, [state.fields, state.layout]);
 
     const editField = useCallback(field => {
-        setState({ field: cloneDeep(field) });
+        setState(state => ({ ...state, field }));
     }, []);
+
+    const onDropTarget = { dropTarget: parent ? parent.fieldId : null };
 
     const onFieldDrop = useCallback<FieldEditorContextValue["onFieldDrop"]>(
         (source, dropTarget) => {
-            const { pos, type, ui } = source;
+            const { pos, type, fieldType, field, fields } = source;
 
-            if (ui === "row") {
-                // Reorder rows.
-                // Reorder logic is different depending on the source and target position.
-                return moveRow(pos.row, dropTarget.row);
+            const parentId = parent ? parent.fieldId : null;
+
+            if (type === "row") {
+                if (parentId !== source.parent) {
+                    // We're dragging an existing row from another fieldset
+                    fields.forEach((field, index) => {
+                        insertField({
+                            field,
+                            position: {
+                                row: dropTarget.row,
+                                index: index === 0 ? null : index
+                            }
+                        });
+                    });
+                } else {
+                    // We're dragging a row within the same fieldset
+                    moveRow(pos.row, dropTarget.row);
+                }
+
+                return onDropTarget;
             }
 
             // If source pos is set, we are moving an existing field.
             if (pos) {
-                const fieldId = state.layout[pos.row][pos.index];
-                return moveField({ field: fieldId, position: dropTarget });
+                if (parentId !== source.parent) {
+                    // We're dragging an existing field from another fieldset
+                    insertField({ field, position: dropTarget });
+                } else {
+                    // We're dragging a field within the same fieldset
+                    moveField({ field, position: dropTarget });
+                }
+                return onDropTarget;
             }
 
-            const plugin = getFieldPlugin(type.toString());
+            const plugin = getFieldPlugin(fieldType);
             editField(plugin.field.createField());
-            setState({ dropTarget });
+            setState(state => ({ ...state, dropTarget }));
         },
         []
     );
+
+    const onEndDrag: FieldEditorContextValue["onEndDrag"] = ({ type, field, fields }, monitor) => {
+        if (!monitor.didDrop()) {
+            return;
+        }
+
+        // Check if we dropped outside of the source fieldset, and if yes, remove the field from the original parent.
+        const { dropTarget } = monitor.getDropResult();
+        const parentId = parent ? parent.fieldId : null;
+        if (dropTarget === parentId) {
+            return;
+        }
+
+        const removeFields = type === "row" ? fields : [field];
+        removeFields.forEach(field => deleteField(field));
+    };
 
     const getFieldsInLayout: FieldEditorContextValue["getFieldsInLayout"] = () => {
         // Replace every field ID with actual field object.
@@ -151,31 +191,30 @@ export const FieldEditorProvider = ({
     /**
      * Inserts a new field into the target position.
      */
-    const insertField: FieldEditorContextValue["insertField"] = (data, position) => {
-        const field = cloneDeep(data);
+    const insertField: FieldEditorContextValue["insertField"] = ({ field, position }) => {
         if (!field.id) {
             field.id = shortid.generate();
         }
 
-        if (!data.type) {
+        if (!field.type) {
             throw new Error(`Field "type" missing.`);
         }
 
-        const fieldPlugin = getFieldPlugin(data.type);
+        const fieldPlugin = getFieldPlugin(field.type);
         if (!fieldPlugin) {
             throw new Error(`Invalid field "type".`);
         }
 
         setState(data => {
-            if (!Array.isArray(data.fields)) {
-                data.fields = [];
-            }
-            data.fields.push(field);
+            data = dot.set(data, "fields", fields => {
+                if (Array.isArray(fields)) {
+                    return fields.concat(field);
+                }
+                return [field];
+            });
 
-            utils.moveField({ field, position, data });
-
-            // We are dropping a new field at the specified index.
-            return data;
+            // Move field to position where it was dropped.
+            return utils.moveField({ field, position, data });
         });
     };
 
@@ -184,8 +223,7 @@ export const FieldEditorProvider = ({
      */
     const moveField: FieldEditorContextValue["moveField"] = ({ field, position }) => {
         setState(data => {
-            utils.moveField({ field, position, data });
-            return data;
+            return utils.moveField({ field, position, data });
         });
     };
 
@@ -194,25 +232,20 @@ export const FieldEditorProvider = ({
      */
     const moveRow: FieldEditorContextValue["moveRow"] = (source, destination) => {
         setState(data => {
-            utils.moveRow({ data, source, destination });
-            return data;
+            return utils.moveRow({ data, source, destination });
         });
     };
 
     /**
      * Updates field.
-     * @param fieldData
      */
-    const updateField: FieldEditorContextValue["updateField"] = fieldData => {
-        const field = cloneDeep(fieldData);
+    const updateField: FieldEditorContextValue["updateField"] = field => {
         setState(data => {
             for (let i = 0; i < data.fields.length; i++) {
                 if (data.fields[i].id === field.id) {
-                    data.fields[i] = field;
-                    break;
+                    return dot.set(data, `fields.${i}`, field);
                 }
             }
-            return data;
         });
     };
 
@@ -221,19 +254,40 @@ export const FieldEditorProvider = ({
      */
     const deleteField: FieldEditorContextValue["deleteField"] = field => {
         setState(data => {
-            utils.deleteField({ field, data });
-            return data;
+            return utils.deleteField({ field, data });
         });
     };
 
-    /**
-     * Returns row / index position for given field.
-     */
-    const getFieldPosition: FieldEditorContextValue["getFieldPosition"] = field => {
-        return utils.getFieldPosition({ field, data: state });
-    };
+    const noConflict = useCallback(
+        isVisible => item => {
+            const sameParent = item.parent === onDropTarget.dropTarget;
+            const draggedFields = [];
+            switch (item.type) {
+                case "row":
+                    item.fields.forEach(field => draggedFields.push(field.fieldId));
+                    break;
+                case "field":
+                    draggedFields.push(item.field.fieldId);
+                    break;
+                default:
+                    break;
+            }
+
+            if (
+                draggedFields.length &&
+                !sameParent &&
+                fields.some(field => draggedFields.includes(field.fieldId))
+            ) {
+                return false;
+            }
+
+            return typeof isVisible === "function" ? isVisible(item) : true;
+        },
+        [fields.map(f => f.fieldId).join(".")]
+    );
 
     const value = {
+        parent,
         getFieldsInLayout,
         getFieldPlugin,
         getField,
@@ -241,13 +295,14 @@ export const FieldEditorProvider = ({
         field: state.field,
         dropTarget: state.dropTarget,
         onFieldDrop,
+        onEndDrag,
         insertField,
         moveField,
         moveRow,
         updateField,
         deleteField,
-        getFieldPosition,
         fields: getFieldsInLayout(),
+        noConflict,
         layout: state.layout
     };
 
