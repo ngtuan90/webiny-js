@@ -13,7 +13,7 @@ export const ObjectFields = ({ field }) => {
             });
             updateField(updatedField);
         },
-        [field.fieldId]
+        [field]
     );
 
     return (

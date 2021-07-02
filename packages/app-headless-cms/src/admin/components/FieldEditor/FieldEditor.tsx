@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback } from "react";
+import React, { Fragment } from "react";
 import get from "lodash/get";
 import { Icon } from "@webiny/ui/Icon";
 import { i18n } from "@webiny/app/i18n";
@@ -14,9 +14,12 @@ import { CmsEditorField, CmsEditorFieldsLayout } from "~/types";
 
 const t = i18n.namespace("app-headless-cms/admin/components/editor");
 
+const fieldTypes = ["field", "newField"];
+
 const Editor = () => {
     const {
         parent,
+        depth,
         insertField,
         updateField,
         deleteField,
@@ -85,6 +88,7 @@ const Editor = () => {
                                         {({ drag }) => (
                                             <div className={fieldContainer} ref={drag}>
                                                 <Vertical
+                                                    depth={depth}
                                                     onDrop={item =>
                                                         onFieldDrop(item, {
                                                             row: index,
@@ -93,7 +97,7 @@ const Editor = () => {
                                                     }
                                                     isVisible={noConflict(
                                                         item =>
-                                                            item.type === "field" &&
+                                                            fieldTypes.includes(item.type) &&
                                                             (row.length < 4 ||
                                                                 get(item, "pos.row") === index)
                                                     )}
@@ -112,9 +116,10 @@ const Editor = () => {
                                                 {fieldIndex === row.length - 1 && (
                                                     <Vertical
                                                         last
+                                                        depth={depth}
                                                         isVisible={noConflict(
                                                             item =>
-                                                                item.type === "field" &&
+                                                                fieldTypes.includes(item.type) &&
                                                                 (row.length < 4 ||
                                                                     get(item, "pos.row") === index)
                                                         )}

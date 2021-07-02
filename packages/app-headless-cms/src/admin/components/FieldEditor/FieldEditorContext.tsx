@@ -14,6 +14,7 @@ import { plugins } from "@webiny/plugins";
 import * as utils from "./utils";
 import { FieldEditorProps } from "./FieldEditor";
 import { DragObjectWithType, DragSourceMonitor } from "react-dnd";
+import { useFieldEditor } from "~/admin/components/FieldEditor/useFieldEditor";
 
 interface DropTarget {
     row: number;
@@ -45,6 +46,7 @@ export interface FieldEditorContextValue {
     editField: (field: CmsEditorField) => void;
     field: CmsEditorField;
     parent: CmsEditorField;
+    depth: number;
     dropTarget?: DropTarget;
     onFieldDrop: (source: Partial<DragSource>, target: DropTarget) => void;
     onEndDrag: (item: DragSource, monitor: DragSourceMonitor) => void;
@@ -71,6 +73,15 @@ export const FieldEditorProvider = ({
     onChange,
     children
 }: FieldEditorProviderProps) => {
+    // We need to determine depth of this provider so we can render drop zones with correct z-indexes.
+    let depth = 0;
+    try {
+        const editor = useFieldEditor();
+        depth = editor.depth + 1;
+    } catch {
+        // There's no parent provider, so this is the top-level one.
+    }
+
     const [state, setState] = useState({
         layout,
         fields,
@@ -288,6 +299,7 @@ export const FieldEditorProvider = ({
 
     const value = {
         parent,
+        depth,
         getFieldsInLayout,
         getFieldPlugin,
         getField,

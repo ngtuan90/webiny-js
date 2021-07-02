@@ -56,25 +56,27 @@ const OuterDivVertical = styled("div")(
 );
 
 type VerticalProps = {
+    depth?: number;
     onDrop(item: DragSource): void;
     last?: boolean;
     isVisible?: any;
 };
 
-const Vertical = ({ last, onDrop, isVisible }: VerticalProps) => {
+const Vertical = ({ depth, last, onDrop, isVisible }: VerticalProps) => {
     return (
         <Droppable onDrop={onDrop} isVisible={isVisible}>
             {({ isOver, isDragging, drop }) => (
                 <div
                     ref={drop}
                     style={{
+                        /* For dropzone debugging: border: "1px solid blue",*/
                         width: "30%",
                         maxWidth: "100px",
                         height: "100%",
                         position: "absolute",
                         top: 0,
                         [last ? "right" : "left"]: 0,
-                        zIndex: isDragging ? 1000 : -1
+                        zIndex: isDragging ? 1000 + depth : -1
                     }}
                 >
                     <OuterDivVertical isOver={isOver} isDragging={isDragging} last={last}>

@@ -67,7 +67,7 @@ export default function DragPreview() {
             style={{
                 position: "fixed",
                 pointerEvents: "none",
-                zIndex: 100,
+                zIndex: 1001,
                 left: 0,
                 top: 0,
                 width: "100%",

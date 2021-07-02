@@ -63,7 +63,8 @@ const Horizontal = ({ last, onDrop, isVisible, ...rest }: HorizontalProps) => {
                     ref={drop}
                     data-testid={rest["data-testid"]}
                     style={{
-                        height: "25px",
+                        /* For dropzone debugging: border: "1px solid blue",*/
+                        height: "15px",
                         width: "100%",
                         position: "absolute",
                         [last ? "bottom" : "top"]: 0,
