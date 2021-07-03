@@ -57,7 +57,8 @@ const ContentFormOptionsMenu = () => {
                     title: <strong>{title}</strong>
                 })}
             </p>
-        )
+        ),
+        dataTestId: "cms.content-form.header.delete-dialog"
     });
 
     const confirmDelete = useCallback(() => {
@@ -90,8 +91,20 @@ const ContentFormOptionsMenu = () => {
     }
 
     return (
-        <Menu className={menuStyles} handle={<IconButton icon={<MoreVerticalIcon />} />}>
-            <MenuItem onClick={confirmDelete} disabled={!entry.id || loading}>
+        <Menu
+            className={menuStyles}
+            handle={
+                <IconButton
+                    icon={<MoreVerticalIcon />}
+                    data-testid={"cms.content-form.header.more-options"}
+                />
+            }
+        >
+            <MenuItem
+                onClick={confirmDelete}
+                disabled={!entry.id || loading}
+                data-testid={"cms.content-form.header.delete"}
+            >
                 <ListItemGraphic>
                     <Icon icon={<DeleteIcon />} />
                 </ListItemGraphic>
