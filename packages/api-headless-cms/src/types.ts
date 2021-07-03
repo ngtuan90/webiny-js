@@ -534,6 +534,7 @@ export interface CmsModelFieldToGraphQLPlugin extends Plugin {
         createTypeField: (params: {
             model: CmsContentModel;
             field: CmsContentModelField;
+            fieldTypePlugins: CmsFieldTypePlugins;
         }) => CmsModelFieldDefinition | string;
         /**
          * Definition for input GraphQL field type.
@@ -553,7 +554,8 @@ export interface CmsModelFieldToGraphQLPlugin extends Plugin {
         createInputField: (params: {
             model: CmsContentModel;
             field: CmsContentModelField;
-        }) => string;
+            fieldTypePlugins: CmsFieldTypePlugins;
+        }) => CmsModelFieldDefinition | string;
         /**
          * Definition for field resolver.
          * By default it is simple return of the `instance.values[fieldId]` but if required, users can define their own.

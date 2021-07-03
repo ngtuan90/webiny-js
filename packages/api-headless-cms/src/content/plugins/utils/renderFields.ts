@@ -1,4 +1,4 @@
-import { CmsFieldTypePlugins, CmsContentModel, CmsModelFieldDefinition } from "../../../types";
+import { CmsFieldTypePlugins, CmsContentModel, CmsModelFieldDefinition } from "~/types";
 
 interface RenderFields {
     (params: {
@@ -10,19 +10,25 @@ interface RenderFields {
 
 export const renderFields: RenderFields = ({ model, type, fieldTypePlugins }) => {
     return model.fields
-        .map(f => {
-            const plugin = fieldTypePlugins[f.type];
-            if (!plugin) {
-                // Let's not render the field if it does not exist in the field plugins.
-                return;
-            }
-            const defs = fieldTypePlugins[f.type][type].createTypeField({ model, field: f });
-
-            if (typeof defs === "string") {
-                return { fields: defs };
-            }
-
-            return defs;
-        })
+        .map(field => renderField({ model, type, field, fieldTypePlugins }))
         .filter(Boolean);
+};
+
+export const renderField = ({ model, type, field, fieldTypePlugins }) => {
+    const plugin = fieldTypePlugins[field.type];
+    if (!plugin) {
+        // Let's not render the field if it does not exist in the field plugins.
+        return;
+    }
+    const defs = fieldTypePlugins[field.type][type].createTypeField({
+        model,
+        field,
+        fieldTypePlugins
+    });
+
+    if (typeof defs === "string") {
+        return { fields: defs };
+    }
+
+    return defs;
 };
