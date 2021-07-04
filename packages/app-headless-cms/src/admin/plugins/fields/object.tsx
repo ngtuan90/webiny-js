@@ -3,6 +3,7 @@ import { ReactComponent as ObjectIcon } from "./icons/ballot_black_24dp.svg";
 import { CmsEditorFieldTypePlugin } from "~/types";
 import { i18n } from "@webiny/app/i18n";
 import { ObjectFields } from "./object/ObjectFields";
+import { createFieldsList } from "~/admin/graphql/createFieldsList";
 
 const t = i18n.ns("app-headless-cms/admin/fields");
 
@@ -32,6 +33,11 @@ const plugin: CmsEditorFieldTypePlugin = {
         },
         render(props) {
             return <ObjectFields {...props} />;
+        },
+        graphql: {
+            queryField({ field }) {
+                return `{ ${createFieldsList(field.settings.fields)} }`;
+            }
         }
     }
 };

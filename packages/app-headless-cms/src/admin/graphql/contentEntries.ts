@@ -1,8 +1,8 @@
 import upperFirst from "lodash/upperFirst";
 import gql from "graphql-tag";
 import pluralize from "pluralize";
-import { plugins } from "@webiny/plugins";
-import { CmsEditorContentModel, CmsEditorFieldTypePlugin } from "~/types";
+import { CmsEditorContentModel } from "~/types";
+import { createFieldsList } from "./createFieldsList";
 
 const ERROR_FIELD = /* GraphQL */ `
     {
@@ -19,24 +19,6 @@ const CONTENT_META_FIELDS = /* GraphQL */ `
     locked
     status
 `;
-
-const createFieldsList = contentModel => {
-    const fields = contentModel.fields.map(field => {
-        const fieldPlugin = plugins
-            .byType<CmsEditorFieldTypePlugin>("cms-editor-field-type")
-            .find(item => item.field.type === field.type);
-
-        const { graphql } = fieldPlugin.field;
-
-        if (graphql && graphql.queryField) {
-            return `${field.fieldId} ${graphql.queryField}`;
-        }
-
-        return field.fieldId;
-    });
-
-    return fields.join("\n");
-};
 
 export const createReadQuery = model => {
     const ucFirstModelId = upperFirst(model.modelId);

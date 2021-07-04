@@ -6,6 +6,10 @@ import { ApolloClient } from "apollo-client";
 import { IconPrefix, IconName } from "@fortawesome/fontawesome-svg-core";
 import Label from "./admin/components/ContentEntryForm/Label";
 
+interface QueryFieldParams {
+    field: CmsEditorField;
+}
+
 export interface CmsEditorFieldTypePlugin extends Plugin {
     /**
      * a plugin type
@@ -139,12 +143,12 @@ export interface CmsEditorFieldTypePlugin extends Plugin {
          */
         graphql?: {
             /**
-             * Define how does the GraphQL field type look like.
+             * Define field selection.
              *
              * ```ts
              * graphql: {
              *     queryField: `
-             *         myField {
+             *         {
              *             id
              *             title
              *             createdOn
@@ -153,7 +157,7 @@ export interface CmsEditorFieldTypePlugin extends Plugin {
              * }
              * ```
              */
-            queryField?: string;
+            queryField?: string | ((params: QueryFieldParams) => string);
         };
         render?(params: any): React.ReactElement;
     };
