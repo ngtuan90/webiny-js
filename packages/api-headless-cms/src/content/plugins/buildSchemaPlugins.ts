@@ -1,4 +1,4 @@
-import { GraphQLSchemaPlugin } from "@webiny/handler-graphql/types";
+import { GraphQLSchemaPlugin } from "@webiny/handler-graphql/plugins/GraphQLSchemaPlugin";
 import { CmsContext } from "../../types";
 import contentModels from "./schema/contentModels";
 import contentEntries from "./schema/contentEntries";

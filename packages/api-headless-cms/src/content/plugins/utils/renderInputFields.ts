@@ -1,5 +1,9 @@
-import { CmsFieldTypePlugins, CmsContentModel, CmsModelFieldDefinition } from "~/types";
-import get from "lodash/get";
+import {
+    CmsFieldTypePlugins,
+    CmsContentModel,
+    CmsModelFieldDefinition,
+    CmsModelFieldToGraphQLPlugin
+} from "~/types";
 
 interface RenderInputFields {
     (params: {
@@ -20,15 +24,17 @@ export const renderInputField = ({ model, field, fieldTypePlugins }) => {
     // want to be careful when accessing the field plugin here too. It is still possible to have a content model
     // that contains a field, for which we don't have a plugin registered on the backend. For example, user
     // could've just removed the plugin from the backend.
-    const createInputField = get(fieldTypePlugins, `${field.type}.manage.createInputField`);
-    if (createInputField) {
-        const def = createInputField({ model, field, fieldTypePlugins });
-        if (typeof def === "string") {
-            return { fields: def };
-        }
+    const plugin: CmsModelFieldToGraphQLPlugin = fieldTypePlugins[field.type];
 
-        return def;
+    if (!plugin) {
+        // Let's not render the field if it does not exist in the field plugins.
+        return;
     }
 
-    return null;
+    const def = plugin.manage.createInputField({ model, field, fieldTypePlugins });
+    if (typeof def === "string") {
+        return { fields: def };
+    }
+
+    return def;
 };

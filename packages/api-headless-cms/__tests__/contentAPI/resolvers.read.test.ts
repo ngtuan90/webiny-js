@@ -1,3 +1,4 @@
+import { printSchema, buildClientSchema } from "graphql";
 import { CmsContentModelGroup } from "../../src/types";
 import { useContentGqlHandler } from "../utils/useContentGqlHandler";
 import models from "./mocks/contentModels";
@@ -118,6 +119,11 @@ describe("READ - Resolvers", () => {
 
         if (update.errors) {
             console.error(`[beforeEach] ${update.errors[0].message}`);
+            process.exit(1);
+        }
+
+        if (update.data.updateContentModel.error) {
+            console.error(`[beforeEach] ${update.data.updateContentModel.error.message}`);
             process.exit(1);
         }
         return targetModel;
@@ -1396,6 +1402,67 @@ describe("READ - Resolvers", () => {
                     },
                     error: null
                 }
+            }
+        });
+    });
+
+    test("should store and retrieve nested objects", async () => {
+        await setupModel("product", contentModelGroup);
+
+        const { vegetables } = await categoryManagerHelper({
+            ...manageOpts
+        });
+        const { createProduct } = useProductManageHandler({
+            ...manageOpts
+        });
+
+        // const [introspection] = await introspect();
+        // console.log(printSchema(buildClientSchema(introspection.data)));
+
+        const [potatoResponse] = await createProduct({
+            data: {
+                title: "Potato",
+                price: 99.9,
+                availableOn: "2020-12-25",
+                color: "white",
+                availableSizes: ["s", "m"],
+                image: "potato.jpg",
+                category: {
+                    modelId: "category",
+                    entryId: vegetables.id
+                },
+                variant: {
+                    name: "Variant 1",
+                    price: 100,
+                    options: [
+                        { name: "Option 1", price: 10 },
+                        { name: "Option 2", price: 20 }
+                    ]
+                }
+            }
+        });
+
+        const potato = potatoResponse.data.createProduct.data;
+
+        expect(potato).toMatchObject({
+            id: potato.id,
+            title: "Potato",
+            price: 99.9,
+            availableOn: "2020-12-25",
+            color: "white",
+            availableSizes: ["s", "m"],
+            image: "potato.jpg",
+            category: {
+                modelId: "category",
+                entryId: vegetables.id
+            },
+            variant: {
+                name: "Variant 1",
+                price: 100,
+                options: [
+                    { name: "Option 1", price: 10 },
+                    { name: "Option 2", price: 20 }
+                ]
             }
         });
     });

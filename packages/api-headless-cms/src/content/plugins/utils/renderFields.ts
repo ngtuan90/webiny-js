@@ -1,4 +1,9 @@
-import { CmsFieldTypePlugins, CmsContentModel, CmsModelFieldDefinition } from "~/types";
+import {
+    CmsFieldTypePlugins,
+    CmsContentModel,
+    CmsModelFieldDefinition,
+    CmsModelFieldToGraphQLPlugin
+} from "~/types";
 
 interface RenderFields {
     (params: {
@@ -15,12 +20,12 @@ export const renderFields: RenderFields = ({ model, type, fieldTypePlugins }) =>
 };
 
 export const renderField = ({ model, type, field, fieldTypePlugins }) => {
-    const plugin = fieldTypePlugins[field.type];
+    const plugin: CmsModelFieldToGraphQLPlugin = fieldTypePlugins[field.type];
     if (!plugin) {
         // Let's not render the field if it does not exist in the field plugins.
         return;
     }
-    const defs = fieldTypePlugins[field.type][type].createTypeField({
+    const defs = plugin[type].createTypeField({
         model,
         field,
         fieldTypePlugins

@@ -150,7 +150,8 @@ const models: CmsContentModel[] = [
             [ids.field207],
             [ids.field208],
             [ids.field209],
-            [ids.field210]
+            [ids.field210],
+            [ids.field211]
         ],
         fields: [
             {

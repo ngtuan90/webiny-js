@@ -28,6 +28,7 @@ const productFields = `
         modelId
         entryId
     }
+    image
     price
     inStock
     itemsInStock
@@ -35,6 +36,14 @@ const productFields = `
     color
     availableSizes
     richText
+    variant {
+        name
+        price
+        options {
+            name
+            price
+        }
+    }
 `;
 
 const errorFields = `

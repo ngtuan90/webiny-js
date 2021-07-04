@@ -22,11 +22,13 @@ const typeFromField = ({ typeOfType, model, type, field, fieldTypePlugins }) => 
     // Every time the types are returned, we need to replace the model name in the generated type name
     // with the actual prefix which includes parent field name type.
     const replace = new RegExp(`${mTypeName}_`, "g");
-
-    const renderer = typeOfType === "type" ? renderField : renderInputField;
-
+    
     for (const f of fields) {
-        const { fields, typeDefs } = renderer({ field: f, type, model, fieldTypePlugins });
+        const { fields, typeDefs } =
+            typeOfType === "type"
+                ? renderField({ field: f, type, model, fieldTypePlugins })
+                : renderInputField({ field: f, model, fieldTypePlugins });
+        
         typeFields.push(fields.replace(replace, `${fieldTypeName}_`));
         if (typeDefs) {
             nestedTypes.push(typeDefs.replace(replace, `${fieldTypeName}_`));
