@@ -3,6 +3,117 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.10.0](https://github.com/webiny/webiny-js/compare/v5.10.0-beta.2...v5.10.0) (2021-07-06)
+
+**Note:** Version bump only for package @webiny/cli
+
+
+
+
+
+# [5.10.0-beta.2](https://github.com/webiny/webiny-js/compare/v5.10.0-beta.1...v5.10.0-beta.2) (2021-07-06)
+
+
+### Bug Fixes
+
+* **upgrade:** cleanup website apollo setup and support both new and old handlers ([332b52a](https://github.com/webiny/webiny-js/commit/332b52a3fe28baa7bf6a5800d77e19e3faa22d97))
+
+
+
+
+
+# [5.10.0-beta.1](https://github.com/webiny/webiny-js/compare/v5.10.0-beta.0...v5.10.0-beta.1) (2021-07-06)
+
+
+### Bug Fixes
+
+* **v5:** upgrade es package path  ([#1757](https://github.com/webiny/webiny-js/issues/1757)) ([6a793c3](https://github.com/webiny/webiny-js/commit/6a793c3bce58e228b9d7214f512df7e7dc067fe3))
+
+
+
+
+
+# [5.10.0-beta.0](https://github.com/webiny/webiny-js/compare/v5.9.0...v5.10.0-beta.0) (2021-07-02)
+
+
+### Bug Fixes
+
+* add upgrade step ([816fa82](https://github.com/webiny/webiny-js/commit/816fa82ce52a6a96544b9ad41acc906917abad02))
+* revert version change ([32c38b1](https://github.com/webiny/webiny-js/commit/32c38b117d40847465adb3334e0b9f8b904b9c51))
+* update dependencies ([f6e6878](https://github.com/webiny/webiny-js/commit/f6e6878325822c1cdf7ee310aaa549c37d0f2847))
+
+
+### Features
+
+* add upgradeApolloCachePlugins step ([d818ca7](https://github.com/webiny/webiny-js/commit/d818ca740df62c8a417ae5c66c5aa9505d10c7f4))
+* update Lambda runtime and sharp layer ([#1738](https://github.com/webiny/webiny-js/issues/1738)) ([c03af0a](https://github.com/webiny/webiny-js/commit/c03af0aba0a315c3823251d9fecd888cc191250c))
+* **api-file-manager:** storage operations ([#1716](https://github.com/webiny/webiny-js/issues/1716)) ([7b81e0b](https://github.com/webiny/webiny-js/commit/7b81e0b7c2ddf396cad09334e10c39e588d8643b))
+
+
+
+
+
+# [5.9.0](https://github.com/webiny/webiny-js/compare/v5.9.0-beta.2...v5.9.0) (2021-06-21)
+
+
+### Bug Fixes
+
+* correct execa arguments ([ef56e8d](https://github.com/webiny/webiny-js/commit/ef56e8d323f856d254ec862a1dc1336faecff56a))
+
+
+
+
+
+# [5.9.0-beta.2](https://github.com/webiny/webiny-js/compare/v5.9.0-beta.1...v5.9.0-beta.2) (2021-06-20)
+
+
+### Bug Fixes
+
+* add cross-env to root package.json ([6f8e00d](https://github.com/webiny/webiny-js/commit/6f8e00db92638b97a44acc05013594a0132dd9f7))
+* add missing type variable initialization ([00aa4cf](https://github.com/webiny/webiny-js/commit/00aa4cf2e5bf45f6282d04eb9e2acfec5eb1a5af))
+* downgrade cross-env (use same as apps) ([f7c96f4](https://github.com/webiny/webiny-js/commit/f7c96f4a0dd1fe1ec5a14e141c7805d4e3bc7d7a))
+* update template ([30664c2](https://github.com/webiny/webiny-js/commit/30664c20bd3a212c23cf361b26a36cebbf29d5dd))
+
+
+
+
+
+# [5.9.0-beta.1](https://github.com/webiny/webiny-js/compare/v5.9.0-beta.0...v5.9.0-beta.1) (2021-06-20)
+
+**Note:** Version bump only for package @webiny/cli
+
+
+
+
+
+# [5.9.0-beta.0](https://github.com/webiny/webiny-js/compare/v5.8.0...v5.9.0-beta.0) (2021-06-18)
+
+
+### Bug Fixes
+
+* add comments ([38d05c1](https://github.com/webiny/webiny-js/commit/38d05c14d40cd3ba2da536cd7e1e57592b2f5cca))
+* add everything-committed check ([a6b1dad](https://github.com/webiny/webiny-js/commit/a6b1dad06190bc10930835caefaacfb4e8967a8f))
+* add types for context object ([4126667](https://github.com/webiny/webiny-js/commit/412666751a47e858f55420715a8943a17d672ae9))
+* correct typo ([5c30b2a](https://github.com/webiny/webiny-js/commit/5c30b2a7913a5d9c2b879fc070df272a8301c3f5))
+* improve messaging ([1c8f4fd](https://github.com/webiny/webiny-js/commit/1c8f4fd60bfe6ffa97357988b25f5974d50b512e))
+* remove "return true" ([138de56](https://github.com/webiny/webiny-js/commit/138de56f7fca1a4e1abcc04b8dca7141d79fee76))
+* remove commented code ([981c545](https://github.com/webiny/webiny-js/commit/981c545bc79547a6a28b7489ff5a87e912f44781))
+* reorder calls ([8639f93](https://github.com/webiny/webiny-js/commit/8639f9339e69476d62682fe738daad949ef5602d))
+* temporary disable check ([3537b68](https://github.com/webiny/webiny-js/commit/3537b684f7617fd7b2b4496534d086e5aba71a3b))
+* unify chalk version ([56e2f73](https://github.com/webiny/webiny-js/commit/56e2f73152ebff0d2501f4d51e4e8f82a5ba15b5))
+* use require instead of import ([71641ec](https://github.com/webiny/webiny-js/commit/71641ec019b0478c8ccc4b5b6ff5a57d53eabf51))
+* use targetVersion ([aa56511](https://github.com/webiny/webiny-js/commit/aa56511f6d76f5a292ce20a35f85289e31814681))
+* **telemetry:** rename package and upgrade configs and env vars loading ([4791937](https://github.com/webiny/webiny-js/commit/4791937de3ec1431c82fca1dc2e91da9c7ac49d3))
+
+
+### Features
+
+* **cli:** add upgrade for 5.9.0 ([bc2c2f9](https://github.com/webiny/webiny-js/commit/bc2c2f9470cfa26d68a693f7cd606bc4498ed3b2))
+
+
+
+
+
 # [5.8.0](https://github.com/webiny/webiny-js/compare/v5.8.0-beta.1...v5.8.0) (2021-06-07)
 
 **Note:** Version bump only for package @webiny/cli
