@@ -22,13 +22,13 @@ const typeFromField = ({ typeOfType, model, type, field, fieldTypePlugins }) => 
     // Every time the types are returned, we need to replace the model name in the generated type name
     // with the actual prefix which includes parent field name type.
     const replace = new RegExp(`${mTypeName}_`, "g");
-    
+
     for (const f of fields) {
         const { fields, typeDefs } =
             typeOfType === "type"
                 ? renderField({ field: f, type, model, fieldTypePlugins })
                 : renderInputField({ field: f, model, fieldTypePlugins });
-        
+
         typeFields.push(fields.replace(replace, `${fieldTypeName}_`));
         if (typeDefs) {
             nestedTypes.push(typeDefs.replace(replace, `${fieldTypeName}_`));
@@ -60,6 +60,9 @@ const plugin: CmsModelFieldToGraphQLPlugin = {
             }
 
             return `${field.fieldId}: JSON`;
+        },
+        createResolver({ field, createFieldResolvers }) {
+            return createFieldResolvers({ fields: field.settings.fields });
         }
     },
     manage: {
@@ -73,7 +76,7 @@ const plugin: CmsModelFieldToGraphQLPlugin = {
             });
 
             return {
-                fields: `${field.fieldId}: ${field.multipleValues ? `[${fieldType}]` : fieldType}`,
+                fields: `${field.fieldId}: ${field.multipleValues ? `[${fieldType}!]` : fieldType}`,
                 typeDefs
             };
         },
@@ -87,8 +90,18 @@ const plugin: CmsModelFieldToGraphQLPlugin = {
             });
 
             return {
-                fields: `${field.fieldId}: ${field.multipleValues ? `[${fieldType}]` : fieldType}`,
+                fields: `${field.fieldId}: ${field.multipleValues ? `[${fieldType}!]` : fieldType}`,
                 typeDefs
+            };
+        },
+        createResolver({ graphQLType, field, createFieldResolvers }) {
+            const fieldType = `${graphQLType}_${upperFirst(field.fieldId)}`;
+            return {
+                resolver: null,
+                typeResolvers: createFieldResolvers({
+                    graphQLType: fieldType,
+                    fields: field.settings.fields
+                })
             };
         }
     }

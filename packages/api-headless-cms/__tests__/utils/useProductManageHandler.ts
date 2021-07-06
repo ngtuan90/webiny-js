@@ -28,7 +28,6 @@ const productFields = `
         modelId
         entryId
     }
-    image
     price
     inStock
     itemsInStock

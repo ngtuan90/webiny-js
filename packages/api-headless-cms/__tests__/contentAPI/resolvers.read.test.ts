@@ -1,4 +1,3 @@
-import { printSchema, buildClientSchema } from "graphql";
 import { CmsContentModelGroup } from "../../src/types";
 import { useContentGqlHandler } from "../utils/useContentGqlHandler";
 import models from "./mocks/contentModels";
@@ -1425,8 +1424,8 @@ describe("READ - Resolvers", () => {
                 price: 99.9,
                 availableOn: "2020-12-25",
                 color: "white",
+                image: "image.png", 
                 availableSizes: ["s", "m"],
-                image: "potato.jpg",
                 category: {
                     modelId: "category",
                     entryId: vegetables.id
@@ -1451,7 +1450,6 @@ describe("READ - Resolvers", () => {
             availableOn: "2020-12-25",
             color: "white",
             availableSizes: ["s", "m"],
-            image: "potato.jpg",
             category: {
                 modelId: "category",
                 entryId: vegetables.id
@@ -1460,7 +1458,7 @@ describe("READ - Resolvers", () => {
                 name: "Variant 1",
                 price: 100,
                 options: [
-                    { name: "Option 1", price: 10 },
+                    { name: "Option 1", price: 10, user: [{}] },
                     { name: "Option 2", price: 20 }
                 ]
             }

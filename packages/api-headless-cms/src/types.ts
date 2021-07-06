@@ -2,7 +2,11 @@ import { Plugin } from "@webiny/plugins/types";
 import { I18NContext, I18NLocale } from "@webiny/api-i18n/types";
 import { ContextInterface } from "@webiny/handler/types";
 import { TenancyContext } from "@webiny/api-tenancy/types";
-import { GraphQLFieldResolver, GraphQLSchemaDefinition } from "@webiny/handler-graphql/types";
+import {
+    GraphQLFieldResolver,
+    GraphQLSchemaDefinition,
+    Resolvers
+} from "@webiny/handler-graphql/types";
 import { BaseI18NContentContext } from "@webiny/api-i18n-content/types";
 import { SecurityPermission } from "@webiny/api-security/types";
 import { HttpContext } from "@webiny/handler-http/types";
@@ -351,6 +355,18 @@ export interface CmsModelFieldDefinition {
     typeDefs?: string;
 }
 
+export interface CmsModelFieldToGraphQLCreateResolver {
+    (params: {
+        models: CmsContentModel[];
+        model: CmsContentModel;
+        graphQLType: string;
+        field: CmsContentModelField;
+        createFieldResolvers: any;
+    }):
+        | GraphQLFieldResolver
+        | { resolver: GraphQLFieldResolver; typeResolvers: Resolvers<CmsContext> };
+}
+
 /**
  * @category Plugin
  * @category ContentModelField
@@ -445,11 +461,7 @@ export interface CmsModelFieldToGraphQLPlugin extends Plugin {
          * }
          * ```
          */
-        createResolver?: (params: {
-            models: CmsContentModel[];
-            model: CmsContentModel;
-            field: CmsContentModelField;
-        }) => GraphQLFieldResolver;
+        createResolver?: CmsModelFieldToGraphQLCreateResolver;
         /**
          * Read API schema definitions for the field and resolvers for them.
          *
@@ -570,11 +582,7 @@ export interface CmsModelFieldToGraphQLPlugin extends Plugin {
          * }
          * ```
          */
-        createResolver?: (params: {
-            models: CmsContentModel[];
-            model: CmsContentModel;
-            field: CmsContentModelField;
-        }) => GraphQLFieldResolver;
+        createResolver?: CmsModelFieldToGraphQLCreateResolver;
     };
 }
 
